@@ -1,0 +1,10 @@
+EAGLE Version 4.13 Copyright (c) 1988-2004 CadSoft
+
+Electrical Rule Check for /mnt/home/deh/GliderWinchItems/BMScable/hw/eagle/bmscable/bmscable.sch at  7/24/2020 20:47:26 
+
+WARNING: Sheet 1/1: POWER Pin IC103 VSS connected to GND
+
+Board and schematic are consistent
+
+    0 errors
+    1 warnings
