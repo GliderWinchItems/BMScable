@@ -1,0 +1,39 @@
+cable_v_ports_v_cells.txt
+
+Cable tester port versus cable
+Nucleo STM32G474RE
+11/22/20
+
+1 - 20 pin ribbon cable pin 
+2 - Nucleo port (or relay 15/17 16/18 switch)
+3 - Ribbon cable color
+4 - Battery module cell number
+5 - eagle:bmschgrR- U-upper L = lower connetector
+6 - eagle:bmschgrR:net designation
+7 - eagle:bmsbmsR: net designation
+
+---- split 1 LOWER ---- 
+1  GND  - black  - 1-  U19          (GND)
+2  PA1  - white  - 2+  U15 C2  CL2
+3  PA3  - gray   - 4+  U11 C4  CL4
+4  PA5  - purple - 6+  U7  C6  CL6
+5  PA7  - blue   - 8+  U3  C8  CL8
+6  PB1  - green  - 10+ L29 C10 CF10
+7  PC1  - yellow - 12+ L25 C12 CF12
+8  PC3  - orange - 14+ L21 C14 CF14
+9  RY8  - red    - 16+ L17 C16 CF16
+10 RY10 - brown  - 18+ L13 C18 CF18 (BAT TOTAL)
+---- split 2 UPPPER ----
+11 PA0  - black  - 1+  U17 C1  CL1
+12 PA2  - white  - 3+  U13 C3  CL3
+13 PA4  - gray   - 5+  U9  C5  CL5
+14 PA6  - purple - 7+  U5  C7  CL7
+15 PB0  - blue   - 9+  U1  C9  CL9
+16 PC0  - green  - 11+ L27 C11 CF11
+17 PC2  - yellow - 13+ L23 C13 CF13
+18 RY5  - orange - 15+ L19 C15 CF15
+19 RY3  - red    - 17+ L15 C18 CF17
+20 gnd  - brown  -                   (GND)
+
+RY COM1 PC4
+RY COM2 PC5
