@@ -43,20 +43,24 @@ R34    PC4  RY4 COMMON 1 white
 R6     PC5  RY9 COMMON 2 white
 
 ADC RY FET
-R2  PC8 Gate
-R9  Gnd Source
+R4  PC6 Gate
+R9  GND Source
 --- Drain -> RY12
 
-LED
+LED-GREEN
 R19 PC7  xxxxx
 
+LED-RED
+R1  PC9
+
 External RY FET
-R4  PC6 Gate
-??? Gnd Source
+R2  PC8 Gate
+L20 GND Source
 
 USART3
-L2  PC11 USART-RX
-R25 PB10 USART-TX
+L2  PC11 USART-RX to TX on USB module
+L3  PC10 USART-TX to RX on USB module
+L8  GND  GND
 
 CAN1
 R5  PB9 CAN-TX
