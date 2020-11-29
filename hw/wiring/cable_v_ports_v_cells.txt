@@ -2,8 +2,9 @@ cable_v_ports_v_cells.txt
 
 Cable tester port perfboard wiring
 Nucleo STM32G474RE
-11/25/20
+11/29/20
 
+Columns:
 1  - R-Right 40 pin Nucleo Hdr; L - Left
 2  - 20 pin (2x10 shrouded) ribbon cable pin 
 3  - Nucleo Hdr wire colors
@@ -24,8 +25,8 @@ R15 5  PA7  blue   R15 - blue   - 8+  U3  C8  CL8
 R24 6  PB1  green  R24 - green  - 10+ L29 C10 CF10
 L36 7  PC1  yellow L36 - yellow - 12+ L25 C12 CF12
 L37 8  PC3  white  L37 - orange - 14+ L21 C14 CF14
---- 9  RY5  red        - red    - 16+ L17 C16 CF16
---- 10 RY3  green      - brown  - 18+ L13 C18 CF18 (BAT TOTAL)
+--- 9  RY8  red        - red    - 16+ L17 C16 CF16
+--- 10 RY10 green      - brown  - 18+ L13 C18 CF18 (BAT TOTAL)
 
 ---- split 2 UPPPER ----
 L28 11 PA0  black  L28 - black  - 1+  U17 C1  CL1
@@ -35,8 +36,8 @@ R13 14 PA6  yellow R13 - purple - 7+  U5  C7  CL7
 L34 15 PB0  blue   L34 - blue   - 9+  U1  C9  CL9
 L38 16 PC0  green  L38 - green  - 11+ L27 C11 CF11
 L35 17 PC2  yellow L35 - yellow - 13+ L23 C13 CF13
---- 18 RY9  blue       - orange - 15+ L19 C15 CF15
---- 19 RY10 red        - red    - 17+ L15 C18 CF17
+--- 18 RY5  blue       - orange - 15+ L19 C15 CF15
+--- 19 RY3  red        - red    - 17+ L15 C17 CF17
 R32 20 AGND black      - brown  -                   (GND)
 
 R34    PC4  RY4 COMMON 1 white
@@ -65,6 +66,19 @@ L8  GND  GND
 CAN1
 R5  PB9 CAN-TX
 R3  PB8-CAN-RX
+R20 GND
+
+I2C1  (4 pin header)
+L22 GND black      1 black   purple  
+--- +5  red        2 white   blue 
+L21 PB7 blue  SDA  3 gray    yellow  3.3K pullup
+R17 PB6 purple SCL 4 purple  orange  3.3K pullup
+
+Pushbutton sws
+--- GND
+L3  PC12
+L4  PD2
+
 
 GND
 L 8,19,20,22
