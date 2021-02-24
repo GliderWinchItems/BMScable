@@ -1,0 +1,36 @@
+L2  PC11 USART-RX to TX on USB module
+L3  PC10 USART-TX to RX on USB module
+L8  GND  GND
+L20 GND Source
+L28 11 PA0  black  L28 - black  - 1+  U17 C1  CL1
+L30 2  PA1  blue   L30 - white  - 2+  U15 C2  CL2
+L32 13 PA4  green  L32 - gray   - 5+  U9  C5  CL5
+L34 15 PB0  blue   L34 - blue   - 9+  U1  C9  CL9
+L35 17 PC2  yellow L35 - yellow - 13+ L23 C13 CF13
+L36 7  PC1  yellow L36 - yellow - 12+ L25 C12 CF12
+L37 8  PC3  white  L37 - orange - 14+ L21 C14 CF14
+L38 16 PC0  green  L38 - green  - 11+ L27 C11 CF11
+
+L 8,19,20,22
+
+R1  PC9
+R2  PC8 Gate
+R3  PB8-CAN-RX
+R4  PC6 Gate
+R5  PB9 CAN-TX
+R6     PC5  RY9 COMMON 2 white
+R9  GND Source
+R11 4  PA5  white  R11 - purple - 6+  U7  C6  CL6
+R13 14 PA6  yellow R13 - purple - 7+  U5  C7  CL7
+R15 5  PA7  blue   R15 - blue   - 8+  U3  C8  CL8
+R19 PC7  xxxxx
+R20 GND
+R24 6  PB1  green  R24 - green  - 10+ L29 C10 CF10
+R32 1  AGND black    - black  - 1-  U19          (GND)
+R32 20 AGND black      - brown  -                   (GND)
+R34    PC4  RY4 COMMON 1 white
+R35 12 PA2  white  R35 - white  - 3+  U13 C3  CL3
+R37 3  PA3  green  R37 - gray   - 4+  U11 C4  CL4
+
+R 9,20
+
