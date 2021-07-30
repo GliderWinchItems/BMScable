@@ -1,0 +1,83 @@
+STM32L431_notes.txt
+07/29/2021
+
+STM32L431 setup notes
+
+1. Get latest repp
+
+git clone git://git.code.sf.net/p/openocd/code openocd
+
+Git pull can be used to update later.
+
+2. Build openocde 0.11.0
+
+./bootstrap
+./configure
+make
+sudo make install
+
+ 3. Update scripts in /usr/share/openocd
+
+cd /usr/share/openocd/scripts
+cp ~/openocd/tcl/target .
+cp ~/openocd/tcl/board  .
+cp ~/openocd/tcl/interface .
+
+4. Pull jumpers from Nucleo or Discovery board to enable SWD
+
+5. On Nucleo, jumper U5V on jp5 to power ST-Link
+
+6. SWD<->STM32L431 board cable
+
+Nucleo (or Discovery) board
+||     || STM32L431 board
+ 1 - Not used
+ 2 -    2  SWCLK  (GRY)
+ 3 -    1  GND    (BLK)
+ 4 -    3  SWDIO  (WHT)
+ 5 - Not used
+ 6 - Not used
+
+7. Powering
+
+- Plug in USB to ST-Link port
+  Nucleo (programmed as received) has a green led that flashes
+  Nucleo Big Red/grn led lights red
+
+- Power board with STM32L431
+
+8. Run openocd
+
+- 
+openocd -f interface/stlink.cfg -f target/stm32l4x.cfg
+Open On-Chip Debugger 0.11.0+dev-00282-gae6de2f93-dirty (2021-07-29-16:35)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : auto-selecting first available session transport "hla_swd". To override use 'transport select <transport>'.
+Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD
+Info : DEPRECATED target event trace-config
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : clock speed 500 kHz
+Info : STLINK V2J38M27 (API v2) VID:PID 0483:374B
+Info : Target voltage: 3.255445
+Info : stm32l4x.cpu: hardware has 6 breakpoints, 4 watchpoints
+Info : starting gdb server for stm32l4x.cpu on 3333
+Info : Listening on port 3333 for gdb connections
+
+[Sucess in connecting]
+
+Run telnet in a separate terminal
+telnet 4444
+
+
+The server terminal window above will show telnet connecting--
+Info : accepting 'telnet' connection on tcp/4444
+
+The telnet window will show a > prompt.
+
+
+
+
+
