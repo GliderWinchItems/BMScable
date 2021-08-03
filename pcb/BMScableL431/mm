@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+
+export FLOAT_TYPE=hard
+
+rm build/BMScableL431.elf
+make
+
+./script-all BMScableL431
+

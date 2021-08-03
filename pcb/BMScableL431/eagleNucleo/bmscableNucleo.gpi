@@ -1,0 +1,58 @@
+Photoplotter Info File: /mnt/home/deh/GliderWinchItems/BMScable/pcb/BMScableL431/eagleNucleo/bmscableNucleo.gpi
+
+ Date              :  5/26/2021 20:29:53 
+ Plotfile          : /mnt/home/deh/GliderWinchItems/BMScable/pcb/BMScableL431/eagleNucleo/bmscableNucleo.sts
+ Apertures         : generated: 
+ Device            : Gerber photoplotter with RS-274-X aperture generation
+
+Parameter settings:
+
+ Emulate Apertures : no
+ Emulate Thermal   : no
+ Emulate Annulus   : no
+ Tolerance Draw  + :  0.00 %
+ Tolerance Draw  - :  0.00 %
+ Tolerance Flash + :  0.00 %
+ Tolerance Flash - :  0.00 %
+ Rotate            : no
+ Mirror            : yes
+ Optimize          : yes
+ Auto fit          : yes
+ OffsetX           : 0inch
+ OffsetY           : 0inch
+
+Plotfile Info:
+
+ Coordinate Format : 2.4
+ Coordinate Units  : Inch
+ Data Mode         : Absolute
+ Zero Suppression  : None
+ End Of Block      : *
+
+Apertures used:
+
+ Code     Shape     Size                  used
+
+ D10      round     0.2049inch               2
+ D11      round     0.1340inch               4
+ D12      octagon   0.0710inch              20
+ D13      rectangle 0.0474inch x 0.0513inch    98
+ D14      rectangle 0.0513inch x 0.0474inch    30
+ D15      rectangle 0.0671inch x 0.0592inch     2
+ D16      square    0.0674inch               1
+ D17      octagon   0.0674inch               5
+ D18      oval      0.1267inch x 0.0674inch     9
+ D19      oval      0.0674inch x 0.1267inch    15
+ D20      oval      0.0680inch x 0.1280inch    18
+ D21      octagon   0.0556inch               6
+ D22      round     0.0556inch               8
+ D23      square    0.0556inch               2
+ D24      round     0.0730inch              10
+ D25      rectangle 0.0552inch x 0.0434inch     6
+ D26      octagon   0.0680inch              80
+ D27      round     0.0595inch               2
+ D28      rectangle 0.0474inch x 0.0631inch     3
+ D29      rectangle 0.0316inch x 0.0946inch     8
+ D30      round     0.0476inch             179
+ D31      round     0.0671inch               2
+

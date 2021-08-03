@@ -1,0 +1,23 @@
+EAGLE Version 4.13 Copyright (c) 1988-2004 CadSoft
+
+Electrical Rule Check for /mnt/home/deh/GliderWinchItems/BMScable/pcb/BMScableL431/eagleNucleo/bmscableNucleo.sch at  5/26/2021 20:19:02 
+
+WARNING: Sheet 1/1: POWER Pin U1POWER VDD_1 connected to VCC
+WARNING: Sheet 1/1: POWER Pin U1POWER VDD_2 connected to VCC
+WARNING: Sheet 1/1: POWER Pin U1POWER VDD_3 connected to VCC
+WARNING: Sheet 1/1: POWER Pin U1POWER VSS_1 connected to VSS_1-VCAP_1
+WARNING: Sheet 1/1: POWER Pin U1POWER VSS_2 connected to VSS_3
+WARNING: Sheet 1/1: POWER Pin U1POWER VSS_3 connected to GND
+WARNING: Sheet 1/1: POWER Pin U1POWER VDD_4 connected to VCC
+WARNING: Sheet 1/1: POWER Pin U1POWER VSS_4 connected to GND
+WARNING: Sheet 1/1: POWER Pin U1AN_POWER VBAT connected to VCC
+WARNING: Sheet 1/1: POWER Pin U1AN_POWER VSSA connected to GND
+WARNING: Sheet 1/1: POWER Pin U1AN_POWER VDDA connected to VDDA1
+WARNING: Sheet 1/1: POWER Pin IC2B GND2 connected to GNDA
+WARNING: Sheet 1/1: POWER Pin IC2B VCC1 connected to VCC
+WARNING: Sheet 1/1: POWER Pin IC2B GND1 connected to GND
+
+Board and schematic are consistent
+
+    0 errors
+   14 warnings
