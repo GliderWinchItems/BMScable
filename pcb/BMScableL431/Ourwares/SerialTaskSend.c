@@ -226,9 +226,13 @@ void StartSerialTaskSend(void* argument1)
 			{		
    	   /* If HAL for this uart/usart is busy nothing happens. */
 				if (ptmp->dmaflag == 0) // send buffer via char-by-char or dma 
+				{
 		 			HAL_UART_Transmit_IT((UART_HandleTypeDef*)pssb->phuart,pssb->pbuf,pssb->size);
-				else		
+				}
+				else
+				{
  					HAL_UART_Transmit_DMA((UART_HandleTypeDef*)pssb->phuart,pssb->pbuf,pssb->size);
+				}
 			}
 		}
 	}
@@ -250,7 +254,7 @@ UBaseType_t uxPriority,
 TaskHandle_t *pxCreatedTask );
 */
 	BaseType_t ret = xTaskCreate(StartSerialTaskSend, "SerialTaskSend",\
-     (128-25), NULL, taskpriority,\
+     (128), NULL, taskpriority,\
      &SerialTaskHandle);
 	if (ret != pdPASS) return NULL;
 
@@ -279,7 +283,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *phuart)
 	pbcb = *ptmp1->ptake;
 
    /* Release buffer just sent to it can be reused. */
-	xSemaphoreGiveFromISR( pbcb->semaphore, &xHigherPriorityTaskWoken );
+	xSemaphoreGiveFromISR(pbcb->semaphore,&xHigherPriorityTaskWoken);
 
 	/* Advance 'take' pointer of circular buffer. */
 	ptmp1->ptake += 1;	// Advance ptr with wraparound
@@ -290,9 +294,13 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *phuart)
 	{
 		pbcb = *ptmp1->ptake;
 		if (ptmp1->dmaflag == 0)
+		{
 			HAL_UART_Transmit_IT (pbcb->phuart,pbcb->pbuf,pbcb->size);
+		}
 		else
+		{
 			HAL_UART_Transmit_DMA(pbcb->phuart,pbcb->pbuf,pbcb->size);
+		}
 	}
 	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 	return;

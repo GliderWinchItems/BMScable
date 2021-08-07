@@ -16,6 +16,7 @@ void adcfastsum16(struct ADCCHANNEL* pchan, uint16_t* pdma)
 	do
 	{
 		pchan->sum = *pdma
+		 + *(pdma + ADC1IDX_ADCSCANSIZE * 0)
 		 + *(pdma + ADC1IDX_ADCSCANSIZE * 1)
 		 + *(pdma + ADC1IDX_ADCSCANSIZE * 2)
 		 + *(pdma + ADC1IDX_ADCSCANSIZE * 3)

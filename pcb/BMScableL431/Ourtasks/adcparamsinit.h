@@ -11,22 +11,26 @@
 #include <stdint.h>
 #include "adcparams.h"
 
-#define SCALE1 (1 << 16)
+//#define SCALE1 (1 << 16)
 
 /* Factory calibration pointers. */
-#define PVREFINT_CAL ((uint16_t*)0x1FFF7A2A)  // Pointer to factory calibration: Vref
-#define PTS_CAL1     ((uint16_t*)0x1FFF7A2C)  // Pointer to factory calibration: Vtemp
-#define PTS_CAL2     ((uint16_t*)0x1FFF7A2E)  // Pointer to factory calibration: Vtemp
+// Raw data acquired at a temperature of 30 °C (± 5 °C), V DDA = V REF+ = 3.0 V (± 10 mV)
+#define PVREFINT_CAL ((uint16_t*)0x1FFF75AA)  // Pointer to factory calibration: Vref
+
+// TS ADC raw data acquired at a temperature of 30 °C (± 5 °C), V DDA = V REF+ = 3.0 V (± 10 mV
+#define PTS_CAL1     ((uint16_t*)0x1FFF75A8)  // Pointer to factory calibration: Vtemp
+#define PTS_CAL1_TEMP 30
+
+// TS ADC raw data acquired at a temperature of 130 °C (± 5 °C), V DDA = V REF+ = 3.0 V (± 10 mV)
+#define PTS_CAL2     ((uint16_t*)0x1FFF75CA)  // Pointer to factory calibration: Vtemp
+#define PTS_CAL2_TEMP 130
+
 
 /* Factory Vdd for Vref calibration. */
-#define VREFCALVOLT 3300  // Factory cal voltage (mv)
-#define VREFCALVOLTF (VREFCALVOLT * 0.001)  // Factory cal voltage, float (volts)
+#define VREFCALVOLT 3000  // Factory cal voltage (mv)
+#define VREFCALVOLTF (VREFCALVOLT * 0.001)f  // Factory cal voltage, float (volts)
 
 /* *************************************************************************/
-void adcparamsinit_init(struct ADCFUNCTION* p);
-/*	@brief	: Load structs for compensation, calibration and filtering for ADC channels
- * @param	: p = Points to struct with "everything" for this ADC module
- * *************************************************************************/
 void adcparamsinit_init(struct ADCFUNCTION* p);
 /*	@brief	: Load structs for compensation, calibration and filtering for ADC channels
  * @param	: p = Points to struct with "everything" for this ADC module

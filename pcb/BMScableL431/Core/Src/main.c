@@ -36,6 +36,11 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
+#include "ADCTask.h"
+#include "adcparams.h"
+
+
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,7 +71,7 @@ DMA_HandleTypeDef hdma_usart1_tx;
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 384 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
@@ -148,14 +153,9 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
-  /* Create serial task (priority) */
-  // Task handle "osThreadId SerialTaskHandle" is global
-  Thrdret = xSerialTaskSendCreate(0); // Create task and set Task priority
-  if (Thrdret == NULL) morse_trap(112);
 
-  /* Create serial receiving task. */
-  ret = xSerialTaskReceiveCreate(0);
-  if (ret != pdPASS) morse_trap(113);
+  /* ADC summing, calibration, etc. */
+
 
   /* Setup semaphore for yprint and sprintf et al. */
   yprintf_init();
@@ -172,6 +172,17 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+   Thrdret = xADCTaskCreate(1); // (arg) = priority
+  if (Thrdret == NULL) morse_trap(117);
+  
+  /* Create serial task (priority) */
+  // Task handle "osThreadId SerialTaskHandle" is global
+  Thrdret = xSerialTaskSendCreate(osPriorityNormal); // Create task and set Task priority
+  if (Thrdret == NULL) morse_trap(112);
+
+  /* Create serial receiving task. */
+  ret = xSerialTaskReceiveCreate(osPriorityNormal);
+  if (ret != pdPASS) morse_trap(113);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -265,14 +276,14 @@ static void MX_ADC1_Init(void)
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   hadc1.Init.LowPowerAutoWait = DISABLE;
   hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.NbrOfConversion = 16;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
   hadc1.Init.OversamplingMode = DISABLE;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
@@ -286,7 +297,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_640CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
@@ -296,6 +307,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_2;
   sConfig.Rank = ADC_REGULAR_RANK_2;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -303,6 +315,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = ADC_REGULAR_RANK_3;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -310,6 +323,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_4;
   sConfig.Rank = ADC_REGULAR_RANK_4;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -317,6 +331,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_5;
   sConfig.Rank = ADC_REGULAR_RANK_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -324,6 +339,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_6;
   sConfig.Rank = ADC_REGULAR_RANK_6;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -331,6 +347,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_7;
   sConfig.Rank = ADC_REGULAR_RANK_7;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -338,6 +355,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_8;
   sConfig.Rank = ADC_REGULAR_RANK_8;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -345,6 +363,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_9;
   sConfig.Rank = ADC_REGULAR_RANK_9;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -352,6 +371,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_10;
   sConfig.Rank = ADC_REGULAR_RANK_10;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -359,6 +379,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_11;
   sConfig.Rank = ADC_REGULAR_RANK_11;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -366,6 +387,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_12;
   sConfig.Rank = ADC_REGULAR_RANK_12;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -373,6 +395,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_13;
   sConfig.Rank = ADC_REGULAR_RANK_13;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -380,6 +403,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_14;
   sConfig.Rank = ADC_REGULAR_RANK_14;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -387,6 +411,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_15;
   sConfig.Rank = ADC_REGULAR_RANK_15;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -394,6 +419,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
+  sConfig.Channel = ADC_CHANNEL_16;
   sConfig.Rank = ADC_REGULAR_RANK_16;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -409,7 +435,7 @@ static void MX_ADC1_Init(void)
   sConfigInjected.InjectedOffset = 0;
   sConfigInjected.InjectedNbrOfConversion = 2;
   sConfigInjected.InjectedDiscontinuousConvMode = DISABLE;
-  sConfigInjected.AutoInjectedConv = DISABLE;
+  sConfigInjected.AutoInjectedConv = ENABLE;
   sConfigInjected.QueueInjectedContext = DISABLE;
   sConfigInjected.ExternalTrigInjecConv = ADC_INJECTED_SOFTWARE_START;
   sConfigInjected.ExternalTrigInjecConvEdge = ADC_EXTERNALTRIGINJECCONV_EDGE_NONE;
@@ -564,7 +590,10 @@ static void MX_GPIO_Init(void)
   * @param  argument: Not used
   * @retval None
   */
-uint32_t mctr = 0; // Debugging counter
+uint32_t mctr = 22; // Debugging counter
+double fctr = 3.1415926535897932384;
+
+char* test = "Quick Brown fox jumped over the lazy dogs back 0123456789\n\r";
 
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
@@ -573,23 +602,40 @@ void StartDefaultTask(void *argument)
 
   struct SERIALSENDTASKBCB* pbuf1 = getserialbuf(&HUARTMON,96);
   if (pbuf1 == NULL) morse_trap(115);
+//struct SERIALSENDTASKBCB* pbuf2 = getserialbuf(&HUARTMON,96);
+//  if (pbuf2 == NULL) morse_trap(116);
+
+  yprintf(&pbuf1,"\n\rBegin %d",mctr++);
 
   /* Infinite loop */
   for(;;)
   {
-    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_3,GPIO_PIN_RESET); // GRN LED ON
-    osDelay(500);
- 
-   HAL_GPIO_WritePin(GPIOB,GPIO_PIN_3,GPIO_PIN_SET); // GRN LED OFF
-    osDelay(500);
+#define ASDFASDFA
+#ifdef ASDFASDFA    
+    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_SET); // RED LED OFF
+    vTaskDelay(500);
 
     HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_RESET); // RED LED ON
-    osDelay(500);
+    vTaskDelay(500);
  
-    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_SET); // RED LED OFF
-    osDelay(500);
- mctr = 999999;
-   yprintf(&pbuf1,"\n\r Hello World %d",mctr++);
+
+   HAL_GPIO_WritePin(GPIOB,GPIO_PIN_3,GPIO_PIN_SET); // GRN LED OFF
+    vTaskDelay(500);
+
+   HAL_GPIO_WritePin(GPIOB,GPIO_PIN_3,GPIO_PIN_RESET); // GRN LED ON
+    vTaskDelay(500);
+#endif
+ //   vTaskDelay(1000);
+
+//  yprintf(&pbuf1,"\n\r Hello World1  %d",mctr++);
+  yprintf(&pbuf1,"\n\rHello World2 %d %22.19f",mctr++, fctr);
+  fctr += 0.1f;
+
+ 
+
+//   yprintf(&pbuf1,"\n\r good bye to %d",mctr++);
+ //  yprintf(&pbuf2,"\n\r buf2....... %d",mctr++);
+
   }
   /* USER CODE END 5 */
 }

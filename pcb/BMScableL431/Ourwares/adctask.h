@@ -3,7 +3,9 @@
 * Date First Issued  : 02/01/2019
 * Description        : Handle ADC w DMA using FreeRTOS/ST HAL within a task
 *******************************************************************************/
-
+/* 
+08/05/2021: Update for STM32L431RB BMScable project. 
+*/
 #ifndef __ADCTASKLC
 #define __ADCTASKLC
 
@@ -12,7 +14,7 @@
 #include "cmsis_os.h"
 #include "stm32l4xx_hal.h"
 
-#define ADCNUM 2  // Number of ADC modules
+#define ADCNUM 1  // Number of ADC modules
 
 /* Augment 'MX adc control block for dma buffering and summing */
 struct ADCDMATSKBLK

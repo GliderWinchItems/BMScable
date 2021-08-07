@@ -43,16 +43,23 @@ struct ADCDMATSKBLK* adctask_init(ADC_HandleTypeDef* phadc,\
 	uint32_t* pnoteval)
 {
 	uint16_t* pdma;
+	int32_t ret;
 	struct ADCDMATSKBLK* pblk = &adc1dmatskblk[0]; // ADC1 only for now
 
 	/* 'adcparams.h' MUST match what STM32CubeMX set up. */
-	if (ADC1IDX_ADCSCANSIZE != phadc->Init.NbrOfConversion) morse_trap(61);//return NULL;
+	if (ADC1IDX_ADCSCANSIZE != (phadc->Init.NbrOfConversion + 2))
+		 morse_trap(61);//return NULL;
 
 	/* ADC DMA summation length must match 1/2 DMA buffer sizing. */
 	if (ADCFASTSUM16SIZE != ADC1DMANUMSEQ) morse_trap(62);
 
 	/* length = total number of uint16_t in dma buffer */
-	uint32_t length = ADC1DMANUMSEQ * 2 * phadc->Init.NbrOfConversion;
+	uint32_t length = ADC1DMANUMSEQ * 2 * ADC1IDX_ADCSCANSIZE;
+
+
+	/* Calibration sequence before enabling ADC. */
+	ret = HAL_ADCEx_Calibration_Start(phadc, ADC_SINGLE_ENDED);
+	if (ret == HAL_ERROR)  morse_trap(330);
 
 taskENTER_CRITICAL();
 
@@ -116,6 +123,7 @@ taskEXIT_CRITICAL();
  * *************************************************************************/
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
+//	morse_trap(222);
 //	adcommon.dmact += 1; // Running count
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	struct ADCDMATSKBLK* ptmp = &adc1dmatskblk[0];

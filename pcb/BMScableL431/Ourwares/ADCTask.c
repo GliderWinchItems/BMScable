@@ -21,7 +21,7 @@
 
 extern ADC_HandleTypeDef hadc1;
 
-uint32_t adcsumdb[6]; // debug
+uint32_t adcsumdb[ADC1IDX_ADCSCANSIZE]; // debug
 uint32_t adcdbctr = 0;// debug
 
 TaskHandle_t ADCTaskHandle;
@@ -48,12 +48,13 @@ void StartADCTask(void *argument)
 	struct ADCDMATSKBLK* pblk = adctask_init(&hadc1,TSK02BIT02,TSK02BIT03,&noteval);
 	if (pblk == NULL) {morse_trap(15);}
 
+
   /* Infinite loop */
   for(;;)
   {
 		/* Wait for DMA interrupt */
 		xTaskNotifyWait(0,0xffffffff, &noteval, portMAX_DELAY);
-
+//morse_trap(221);
 		if (noteval & TSK02BIT02)
 		{
 			pdma = adc1dmatskblk[0].pdma1;
@@ -68,7 +69,6 @@ p16 = pdma;
 		adcfastsum16(&adc1.chan[0], pdma); // Fast in-line addition
 		adc1.ctr += 1; // Update count
 
-#define DEBUGGINGADCREADINGS
 #ifdef DEBUGGINGADCREADINGS
 		/* Save sum for defaultTask printout for debugging */
 		adcsumdb[0] = adc1.chan[0].sum;
@@ -86,7 +86,7 @@ p16 = pdma;
 		/* Calibrate and filter ADC readings. */
 		adcparams_cal();
 
-		/* Notify GEVCUr Task that new readings are ready. */
+		/* Notify that new readings are ready. */
 //		if( LevelwindTaskHandle == NULL) morse_trap(51); // JIC task has not been created	
 //		xTaskNotify(LevelwindTaskHandle, GEVCUBIT00, eSetBits);
 
@@ -105,16 +105,13 @@ osThreadId xADCTaskCreate(uint32_t taskpriority)
 	xRet = xTaskCreate(
 		StartADCTask,     /* Function that implements the task. */
 		"ADCTask",        /* Text name for the task. */
-		128,              /* Stack size in words, not bytes. */
-		(void*)1,         /* Parameter passed into the task. */
+		256,              /* Stack size in words, not bytes. */
+		NULL,             /* Parameter passed into the task. */
 		taskpriority,     /* Priority at which the task is created. */
 		&ADCTaskHandle ); /* Used to pass out the created task's handle. */ 
 
-	if( xRet == pdPASS )
-    {
-    	return ADCTaskHandle;	
-    }
-    return NULL;
+	if( xRet != pdPASS )return NULL;
 
+   	return ADCTaskHandle;	
 }
 

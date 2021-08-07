@@ -25,7 +25,7 @@ Voltage at 25 °C 1.34 1.43 1.52
 #define __ADC_IDX_V_STRUCT
 
 /* These set the sizes of in "struct ADCFUNCTION" below */
-#define ADCNUMABS   3  // Number of Absolute calibrated readings
+#define ADCNUMABS   16  // Number of Absolute calibrated readings
 #define ADCNUMRATIO 1  // Number of Ratiometric calibrated readings
 
 /* Parameters for ADC reading */
@@ -36,6 +36,7 @@ struct ADC1CALINTERNAL
 {
 	struct IIR_L_PARAM iiradcvref; // Filter: adc readings: Vref 
 	struct IIR_L_PARAM iiradctemp; // Filter: adc readings: temperature
+	float fvref;      // Internal reference voltage fixed
 	float frmtemp;    // (float) Room temp for reading (deg C)
 	float fvtemp;     // (float) Voltage of temp sensor at rm temperature
 	float fvdd;       // (float) measured Vdd (volts)

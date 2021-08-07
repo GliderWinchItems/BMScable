@@ -92,6 +92,7 @@ static void internal(struct ADCFUNCTION* padc1)
 #define PVREFINT_CAL ((uint16_t*)0x1FFF7A2A))  // Pointer to factory calibration: Vref
 #define PTS_CAL1     ((uint16_t*)0x1FFF7A2C))  // Pointer to factory calibration: Vtemp
 #define PTS_CAL2     ((uint16_t*)0x1FFF7A2E))  // Pointer to factory calibration: Vtemp
+#define VREFCALVOLT 3000  // Factory cal voltage (mv)
 */
 
 adcdbg1 = DTWTIME;
@@ -99,29 +100,29 @@ adcdbg1 = DTWTIME;
 struct ADCCALCOMMON* pacom = &padc1->common;
 
 /* The following two computaions with ints uses 119 machines cycles. */
-	pacom->ivdd = (3300 * ADC1DMANUMSEQ) * (*PVREFINT_CAL) / (padc1->chan[ADC1IDX_INTERNALVREF].sum);
+	pacom->ivdd = pacom->fvref / (padc1->chan[ADC1IDX_INTERNALVREF].sum);
 
-	pacom->ui_tmp = (pacom->ivdd * padc1->chan[ADC1IDX_INTERNALTEMP].sum ) / 3300; // Adjust for Vdd not at 3.3v calibration
-	pacom->degC  = pacom->ll_80caldiff * (pacom->ui_tmp - pacom->ui_cal1) + (30 * SCALE1 * ADC1DMANUMSEQ);
-	pacom->degC *= ((float)1.0/(SCALE1*ADC1DMANUMSEQ)); 
-	pacom->degCfilt = iir_f1_f(&padc1->chan[ADC1IDX_INTERNALTEMP].iir_f1, pacom->degC);
+//	pacom->ui_tmp = (pacom->ivdd * padc1->chan[ADC1IDX_INTERNALTEMP].sum ) / VREFCALVOLT; // Adjust for Vdd not at 3.0v calibration
+//	pacom->degC  = pacom->ll_80caldiff * (pacom->ui_tmp - pacom->ui_cal1) + (30 * SCALE1 * ADC1DMANUMSEQ);
+//	pacom->degC *= ((float)1.0/(SCALE1*ADC1DMANUMSEQ)); 
+//	pacom->degCfilt = iir_f1_f(&padc1->chan[ADC1IDX_INTERNALTEMP].iir_f1, pacom->degC);
 
 	pacom->fvdd = pacom->ivdd;
 	pacom->fvdd = pacom->fvdd + pacom->tcoef * (pacom->degC - (float)30);
 
 	pacom->fvddfilt = iir_f1_f(&padc1->chan[ADC1IDX_INTERNALVREF].iir_f1, pacom->fvdd);
 
-	pacom->fvddcomp = pacom->fvddfilt * pacom->sensor5vcalVdd; // Pre-compute for multple uses later
+//	pacom->fvddcomp = pacom->fvddfilt * pacom->sensor5vcalVdd; // Pre-compute for multple uses later
 
-	pacom->fvddrecip = (float)1.0/pacom->fvddfilt; // Pre-compute for multple uses later
+//	pacom->fvddrecip = (float)1.0/pacom->fvddfilt; // Pre-compute for multple uses later
 
 	/* Scale up for fixed division, then convert to float and descale. */
-	pacom->f5_Vddratio = ( (padc1->chan[ADC1IDX_INTERNALVREF].sum * (float)(1<<12)) / padc1->chan[ADC1IDX_5VSUPPLY].sum);
-	pacom->f5_Vddratio *= ((float)1.0/(float)(1<<12));
+//	pacom->f5_Vddratio = ( (padc1->chan[ADC1IDX_INTERNALVREF].sum * (float)(1<<12)) / padc1->chan[ADC1IDX_5VSUPPLY].sum);
+//	pacom->f5_Vddratio *= ((float)1.0/(float)(1<<12));
 
 	/* 5v supply voltage. */
-	pacom->f5vsupply = padc1->chan[ADC1IDX_5VSUPPLY].sum * pacom->fvddfilt * pacom->f5vsupplyprecal + pacom->f5vsupplyprecal_offset;
-	pacom->f5vsupplyfilt = iir_f1_f(&padc1->chan[ADC1IDX_5VSUPPLY].iir_f1, pacom->f5vsupply);
+//	pacom->f5vsupply = padc1->chan[ADC1IDX_5VSUPPLY].sum * pacom->fvddfilt * pacom->f5vsupplyprecal + pacom->f5vsupplyprecal_offset;
+//	pacom->f5vsupplyfilt = iir_f1_f(&padc1->chan[ADC1IDX_5VSUPPLY].iir_f1, pacom->f5vsupply);
 
 adcdbg2 = DTWTIME - adcdbg1;
 
@@ -154,7 +155,7 @@ static void absolute(struct ADCFUNCTION* p, uint8_t idx)
  * @param	: p = Pointer
  * @param	: idx = index into ADC sum for sensor
  * *************************************************************************/
-
+#ifdef FIVEVSUPPLYMEASUREMENT
 uint32_t dbgadcfil;
 uint32_t dbgadcratio;
 
@@ -191,6 +192,7 @@ dbgadcratio=adcratio;
 
 	return;
 }
+#endif
 
 /* *************************************************************************
  * void adcparams_cal(void);
@@ -203,11 +205,11 @@ void adcparams_cal(void)
 	/* First: Update Vref used in subsequent computations. */
 	internal(p);
 
-	absolute(p, ADC1IDX_STEPPERV);  // Stepper controller voltage
+//	absolute(p, ADC1IDX_STEPPERV);  // Stepper controller voltage
   
-	absolute(p, ADC1IDX_5VSUPPLY);  // 5v supply to sensors
+//	absolute(p, ADC1IDX_5VSUPPLY);  // 5v supply to sensors
   
-	absolute(p, ADC1IDX_SPARE);     // Spare input
+//	absolute(p, ADC1IDX_SPARE);     // Spare input
 
 /* Note: 5v supply should be processed before ratiometrics.  Otherwise,
    old readings will be used which is not a big deal for a slowly 

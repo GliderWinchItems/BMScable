@@ -61,34 +61,17 @@ struct ADC1CALINTERNAL
 	p->calintern.iiradctemp.scale = 4;
 
 	// Internal voltage ref: ADC1IDX_INTERNALVREF  5   // IN18     - Internal voltage reference
-	p->calintern.fvdd   = 2.936;	// Vdd for following Vref ADC reading
-	p->calintern.adcvdd = 27093;  //(16*1495.5) ADC reading (DMA sum) for above Vdd
+	p->calintern.fvdd   = 3.29f;   // Vdd for following Vref ADC reading
+	p->calintern.adcvdd = 27093;   //(16*1495.5) ADC reading (DMA sum) for above Vdd
+	p->calintern.fvref  = 1.212f;  // reference voltage
 
 	// Internal temperature: ADC1IDX_INTERNALTEMP  4   // IN17     - Internal temperature sensor
 	p->calintern.adcrmtmp  = 17838; // Room temp ADC (DMA sum) reading
-	p->calintern.frmtemp   = 25.0;  // Room temp for ADC reading     
-	p->calintern.fslope    = 4.3;   // mv/degC slope of temperature sensor
-	p->calintern.fvreftmpco= 15;    // Vref temp coefficient (15 is based on similar parts)
-	p->calintern.fvtemp    = 1.40;  // Vtemp voltage at 25 degC
+	p->calintern.frmtemp   = 25.0f;  // Room temp for ADC reading     
+	p->calintern.fslope    =  4.3f;   // mv/degC slope of temperature sensor
+	p->calintern.fvreftmpco= 15.0f;    // Vref temp coefficient (15 is based on similar parts)
+	p->calintern.fvtemp    =  1.40f;  // Vtemp voltage at 25 degC
 
-/*  Reproduced for convenience 
-struct ADCCALHE
-{
-	struct IIR_L_PARAM iir; // Filter: Time constant, integer scaling
-	float   scale;     // 
-	uint32_t zeroadcve; // connected, no current: HE adc reading
-	uint32_t zeroadc5;  // connected, no current: 5v adc reading 
-	uint32_t caladcve;  // connected, calibrate current: adc reading
-	float   fcalcur;   // connected, calibrate current: current
-};
-*/
-	/// PC5 IN15 - 5V ratiometric spare
-	p->cratio[ADC1IDX_SPARE].iir.k     = 10;    // Filter time constant
-	p->cratio[ADC1IDX_SPARE].iir.scale = 2;     // Filter integer scaling
-	p->cratio[ADC1IDX_SPARE].zeroadcve = 27082; // connected, no current: HE adc reading
-	p->cratio[ADC1IDX_SPARE].zeroadc5  = 63969; // connected, no current: 5v adc reading 
-	p->cratio[ADC1IDX_SPARE].caladcve  = 29880; // connected, cal current: adc reading
-	p->cratio[ADC1IDX_SPARE].fcalcur   = 16.03;  // connected, cal current: current * turns
 
 /*  Reproduced for convenience 
 struct ADCCALABS
@@ -98,24 +81,89 @@ struct ADCCALABS
     float    fvn;      // (float) measured vn (volts)
 };
 */
-	/// PA4 IN4  - Stepper controller power voltage
-// Note: computed calibration: 110K|2.7K resistor divider	
-	p->cabs[ADC1IDX_STEPPERV].iir.k     = 5;     // Filter time constant
-	p->cabs[ADC1IDX_STEPPERV].iir.scale = 2;     // Filter integer scaling
-	p->cabs[ADC1IDX_STEPPERV].adcvn     = 64668; // (ADC reading) at calibration volts
-	p->cabs[ADC1IDX_STEPPERV].fvn       = 110.0;  // (float) calibration volts
+// Battery module cell - (sixteen) ADC0 -ADC15
+#define CELLTC 5 // Filter time constant
+	p->cabs[0].iir.k     = CELLTC; // Filter time constant
+	p->cabs[0].iir.scale = 2;      // Filter integer scaling
+	p->cabs[0].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[0].fvn       = 64.0f; // calibration volts
 
-	// PA7 IN7 - Regulated 5V 
-	p->cabs[ADC1IDX_5VSUPPLY].iir.k      = 10;    // Filter time constant
-	p->cabs[ADC1IDX_5VSUPPLY].iir.scale  = 2;     // Filter integer scaling
-	p->cabs[ADC1IDX_5VSUPPLY].adcvn      = 64480; // (ADC reading) at calibration volts
-	p->cabs[ADC1IDX_5VSUPPLY].fvn        = 4.99;  // (float) calibration volts
+	p->cabs[1].iir.k     = CELLTC; // Filter time constant
+	p->cabs[1].iir.scale = 2;      // Filter integer scaling
+	p->cabs[1].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[1].fvn       = 64.0f; // calibration volts
 
-	// PC4 IN14 - Spare
-	p->cabs[ADC1IDX_SPARE].iir.k     = 10;    // Filter time constant
-	p->cabs[ADC1IDX_SPARE].iir.scale = 2;     // Filter integer scaling
-	p->cabs[ADC1IDX_SPARE].adcvn     = 32000; // (ADC reading) at calibration volts
-	p->cabs[ADC1IDX_SPARE].fvn       = 13.68; // (float) calibration volts
+	p->cabs[2].iir.k     = CELLTC; // Filter time constant
+	p->cabs[2].iir.scale = 2;      // Filter integer scaling
+	p->cabs[2].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[2].fvn       = 64.0f; // calibration volts
+
+	p->cabs[3].iir.k     = CELLTC; // Filter time constant
+	p->cabs[3].iir.scale = 2;      // Filter integer scaling
+	p->cabs[3].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[3].fvn       = 64.0f; // calibration volts
+
+	p->cabs[4].iir.k     = CELLTC; // Filter time constant
+	p->cabs[4].iir.scale = 2;      // Filter integer scaling
+	p->cabs[4].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[4].fvn       = 64.0f; // calibration volts
+
+	p->cabs[5].iir.k     = CELLTC; // Filter time constant
+	p->cabs[5].iir.scale = 2;      // Filter integer scaling
+	p->cabs[5].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[5].fvn       = 64.0f; // calibration volts
+
+	p->cabs[6].iir.k     = CELLTC; // Filter time constant
+	p->cabs[6].iir.scale = 2;      // Filter integer scaling
+	p->cabs[6].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[6].fvn       = 64.0f; // calibration volts
+
+	p->cabs[7].iir.k     = CELLTC; // Filter time constant
+	p->cabs[7].iir.scale = 2;      // Filter integer scaling
+	p->cabs[7].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[7].fvn       = 64.0f; // calibration volts
+
+	p->cabs[8].iir.k     = CELLTC; // Filter time constant
+	p->cabs[8].iir.scale = 2;      // Filter integer scaling
+	p->cabs[8].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[8].fvn       = 64.0f; // calibration volts
+
+	p->cabs[9].iir.k     = CELLTC; // Filter time constant
+	p->cabs[9].iir.scale = 2;      // Filter integer scaling
+	p->cabs[9].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[9].fvn       = 64.0f; // calibration volts
+
+	p->cabs[10].iir.k     = CELLTC; // Filter time constant
+	p->cabs[10].iir.scale = 2;      // Filter integer scaling
+	p->cabs[10].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[10].fvn       = 64.0f; // calibration volts
+
+	p->cabs[11].iir.k     = CELLTC; // Filter time constant
+	p->cabs[11].iir.scale = 2;      // Filter integer scaling
+	p->cabs[11].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[11].fvn       = 64.0f; // calibration volts
+
+	p->cabs[12].iir.k     = CELLTC; // Filter time constant
+	p->cabs[12].iir.scale = 2;      // Filter integer scaling
+	p->cabs[12].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[12].fvn       = 64.0f; // calibration volts
+
+	p->cabs[13].iir.k     = CELLTC; // Filter time constant
+	p->cabs[13].iir.scale = 2;      // Filter integer scaling
+	p->cabs[13].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[13].fvn       = 64.0f; // calibration volts
+
+	p->cabs[14].iir.k     = CELLTC; // Filter time constant
+	p->cabs[14].iir.scale = 2;      // Filter integer scaling
+	p->cabs[14].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[14].fvn       = 64.0f; // calibration volts
+
+	p->cabs[15].iir.k     = CELLTC; // Filter time constant
+	p->cabs[15].iir.scale = 2;      // Filter integer scaling
+	p->cabs[15].adcvn     = 65394;  // (ADC reading) at calibration volts
+	p->cabs[15].fvn       = 64.0f; // calibration volts
+
+
 
 	return 0;	
 }

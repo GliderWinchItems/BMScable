@@ -23,6 +23,7 @@
 #include "stm32l4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "morse.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,13 +58,63 @@
 
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc1;
+extern ADC_HandleTypeDef hadc1;
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart1_tx;
 extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim15;
 
 /* USER CODE BEGIN EV */
+/* Registers from Hard Fault */
 
+/* Saved registers -- in the following order:
+0 - psr was stacked by Hard Fault; 4 - 10 remain.
+  0, 1, 2, 3, 12, lr, pc, psr, 4, 5, 6, 7, 8, 9, 10 */
+volatile uint32_t reg_stack[16];
+
+
+volatile uint32_t sys_regs[5];
+/* sys_regs: Four System registers saved. 0xE000ED30 skipped.
+hence, 5 words reserved.
+
+[0] 0xE000ED28 
+  Memory Management Fault Status Register (byte)
+   7 MMAR is valid
+   4 Stacking error
+   3 Unstacking error
+   1 Data access violation
+   0 Instruction access violation
+
+  Bus Fault Status Register (byte)
+   7 BFAR is valid
+   4 Stacking error
+   3 Unstacking error
+   2 Imprecise data access violation
+   1 Precise data access violation
+   0 Instruction access violation
+ 
+  Usage Fault Status Register (half word)
+   9 Divide by zero (only set if DIV_)_TRP set)
+   8 Unaligned access 
+   3 Attempt to execut coprocessor instruction
+   2 Attempt to do exception with bad value in EXC_RETURN
+   1 Attempt to switch to invalid state (e.g. ARM)
+   0 Attempt to execute an undefined instruction
+
+[1] 0xE000ED2C Hard Fault Status Register (word)
+ 31 Triggered by debugg event
+ 30 Taken because bus fault/mem mngment fault/usage fault
+  1 Vector fetch
+
+[2] 0xE000ED30 Debug Fault Status Register (word)
+ not saved
+
+[3] 0xE000ED34 Memory Manage Address Register (word)
+ Address that caused memory manage fault
+
+[4] 0xE000ED38 Bus Fault Manage Address Register (word)
+ Address that caused the bus fault
+*/
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -90,7 +141,65 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
+/* The prototype shows it is a naked function - in effect this is just an
+assembly function. */
+void HardFault_Handler( void ) __attribute__( ( naked ) );
 
+/* The fault handler implementation calls a function called
+prvGetRegistersFromStack(). */
+//void HardFault_Handler(void)
+//{
+  /* USER CODE BEGIN HardFault_IRQn 0 */
+ __asm volatile
+ (
+   " tst lr, #4                       \n\t" /* Determine stack in use. */ 
+   " ite eq                           \n\t" /* Set R0 with stack ptr */
+   " mrseq r0, msp                    \n\t" 
+   " mrsne r0, psp                    \n\t"
+   " mov r1, r0                       \n\t"
+   " ldr r2, handler2_address_const   \n\t" /* Save stacked regs. */
+   " ldr r3, [r1, 0]                  \n\t" /* r0  */
+  " str r3, [r2, 0]                  \n\t"      
+   " ldr r3, [r1, 4]                  \n\t" /* r1  */
+  " str r3, [r2, 4]                  \n\t"  
+   " ldr r3, [r1, 8]                  \n\t" /* r2  */
+  " str r3, [r2, 8]                  \n\t"        
+   " ldr r3, [r1, 12]                 \n\t" /* r3  */      
+  " str r3, [r2, 12]                 \n\t"        
+   " ldr r3, [r1, 16]                 \n\t" /* r12 */
+  " str r3, [r2, 16]                 \n\t"
+   " ldr r3, [r1, 20]                 \n\t" /* lr  */
+  " str r3, [r2, 20]                 \n\t"
+   " ldr r3, [r1, 24]                 \n\t" /* pc  */
+  " str r3, [r2, 24]                 \n\t"
+   " ldr r3, [r1, 28]                 \n\t" /* psr */
+  " str r3, [r2, 28]                 \n\t"
+   " str r4, [r2, 32]     \n\t" /* r4 */ /* Save remaining regs. */
+   " str r5, [r2, 36]     \n\t" /* r5 */
+   " str r6, [r2, 40]     \n\t" /* r6 */
+   " str r7, [r2, 48]     \n\t" /* r7 */
+   " str r8, [r2, 52]     \n\t" /* r8 */
+   " str r9, [r2, 56]     \n\t" /* r9 */
+   " str r10, [r2, 60]    \n\t" /* r10 */
+   " str r11, [r2, 64]    \n\t" /* r11 */
+   " ldr r2, handler5_address_const  \n\t" /* system registers dest */
+   " ldr r3, handler6_address_const  \n\t" /* system registers source */
+   " ldr r1, [r3, 0]        \n\t" /* 0xE000ED28 Status regs: two bytes:one half word  */
+  " str r1, [r2, 0]        \n\t"      
+   " ldr r1, [r3, 4]        \n\t" /* 0xE000ED2A HardFault Status (2 half word)  */
+  " str r1, [r2, 4]        \n\t"      
+   " ldr r1, [r3, 12]       \n\t" /* 0xE000ED34 MMAR: Mem Mgmnt Addr Reg  */
+  " str r1, [r2, 12]       \n\t"      
+   " ldr r1, [r3, 16]       \n\t" /* 0xE000ED38 BFAR: Bus Mgmnt Addr Reg    */
+  " str r1, [r2, 16]       \n\t"      
+   " movs r0, #111  \n\t"    /* Flash LEDs */
+   " ldr r2, handler4_address_const   \n\t"
+   " bx r2                            \n\t"
+   " handler4_address_const: .word morse_trap \n\t"
+   " handler2_address_const: .word reg_stack \n\t"
+   " handler5_address_const: .word sys_regs \n\t"
+   " handler6_address_const: .word 0xE000ED28 \n\t" /* Memory Mgmnt Fault Status Reg. */
+ );
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
@@ -105,7 +214,7 @@ void HardFault_Handler(void)
 void MemManage_Handler(void)
 {
   /* USER CODE BEGIN MemoryManagement_IRQn 0 */
-
+  morse_trap(222);
   /* USER CODE END MemoryManagement_IRQn 0 */
   while (1)
   {
@@ -120,7 +229,7 @@ void MemManage_Handler(void)
 void BusFault_Handler(void)
 {
   /* USER CODE BEGIN BusFault_IRQn 0 */
-
+  morse_trap(333);
   /* USER CODE END BusFault_IRQn 0 */
   while (1)
   {
@@ -135,7 +244,7 @@ void BusFault_Handler(void)
 void UsageFault_Handler(void)
 {
   /* USER CODE BEGIN UsageFault_IRQn 0 */
-
+  morse_trap(444);
   /* USER CODE END UsageFault_IRQn 0 */
   while (1)
   {
@@ -204,6 +313,20 @@ void DMA1_Channel5_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
 
   /* USER CODE END DMA1_Channel5_IRQn 1 */
+}
+
+/**
+  * @brief This function handles ADC1 global interrupt.
+  */
+void ADC1_IRQHandler(void)
+{
+  /* USER CODE BEGIN ADC1_IRQn 0 */
+
+  /* USER CODE END ADC1_IRQn 0 */
+  HAL_ADC_IRQHandler(&hadc1);
+  /* USER CODE BEGIN ADC1_IRQn 1 */
+
+  /* USER CODE END ADC1_IRQn 1 */
 }
 
 /**

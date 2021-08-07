@@ -33,18 +33,15 @@ Compute
 #include "adc_idx_v_struct.h"
 
 #define ADC1DMANUMSEQ        16 // Number of DMA scan sequences in 1/2 DMA buffer
-#define ADCEXTENDSUMCT     1024 // Sum of 1/2 DMA sums for additional averaging
-#define ADC1IDX_ADCSCANSIZE   5 // Number ADC channels read
+#define ADCEXTENDSUMCT       64 // Sum of 1/2 DMA sums for additional averaging
+#define ADC1IDX_ADCSCANSIZE  18 // Number ADC channels read (autoinject includes Vref an Vtemp)
 #define ZTOLERANCE         0.05 // +/- tolerance for re-adjustment of Hall_effect sensor zero
 #define ADCSCALEbits         15 // 2^x scale large
 
 /* ADC reading sequence/array indices                                           */
 /* These indices -=>MUST<= match the hardware ADC scan sequence in STM32CubeMX. */
-#define ADC1IDX_STEPPERV      0   // PA4 IN4  - Stepper controller power voltage
-#define ADC1IDX_5VSUPPLY      1   // PA7 IN7  - 5V #also CAN driver RS output:pushpull
-#define ADC1IDX_SPARE         2   // PC4 IN10? - 5V Spare ADC input
-#define ADC1IDX_INTERNALTEMP  3   // IN17     - Internal temperature sensor
-#define ADC1IDX_INTERNALVREF  4   // IN18     - Internal voltage reference
+#define ADC1IDX_INTERNALTEMP  16   // IN17     - Internal temperature sensor
+#define ADC1IDX_INTERNALVREF  17   // IN18     - Internal voltage reference
 
 /* Calibrated ADC reading. */
 union ADCCALREADING
@@ -59,19 +56,9 @@ union ADCCALREADING
 */
 struct ADCCALCOMMON
 {
-
 	struct IIRFILTERL iiradcvref; // Intermediate filter params: vref 
 	struct IIRFILTERL iiradctemp; // Intermediate filter params: temperature sensor
 
-	// 5v supply
-	float f5vsupply;       // 5v supply
-	float fvddcomp;      // 5->Vdd adjusted factor
-	float fvddrecip;
-	float f5_Vddratio;   // (V5volt * Ratio)/ADCsum[5volt supply]
-	float f5vsupplyprecal; // 5v supply precalc calibration ratio
-	float f5vsupplyfilt;   // 5v supply, filtered
-	float sensor5vcalVdd;// The 5v->Vdd divider ratio Vdd adjusted
-	float f5vsupplyprecal_offset; // 5v supply precalc calibration ratio
 
 	// Internal voltage reference
 	float fvref;         // Vref: 1.18 min, 1.21 typ, 1.24 max
@@ -85,10 +72,11 @@ struct ADCCALCOMMON
 	uint32_t adccmpvref; // scaled vref compensated for temperature
 
 	// Internal temperature sensor (floats)
-	float ts_cal1;    // Vtemp: TS_CAL1 converted to float ( 30 deg C 3.3v)
-	float ts_cal2;    // Vtemp: TS_CAL2 converted to float (110 deg C 3.3v)
-	float ts_caldiff; // CAL2-CAL1
-	float ts_80caldiff;
+	float ts_cal1;    // Vtemp: TS_CAL1 converted to float
+	float ts_cal2;    // Vtemp: TS_CAL2 converted to float
+	float ts_caldiff; // (ts_cal2 - ts_cal1)
+	float ts_calrate; // (calibration temp diff)/ts_calrate
+	float tx_cal1dma; // ts)cal1 * ADC1 DMA NUM SEQ (16)
 	float v25;           // Vtemp: 25 deg C (0.76v typ)
     float slope;         // Vtemp: mv/degC 
 	float offset;        // Vtemp: offset
@@ -125,17 +113,6 @@ struct ADCABSOLUTE
 	uint32_t ival;        // scaled int computed value (not divider scaled)
 };
 
-/* Working values for ratiometric sensors using 5v supply. */
-struct ADCRATIOMETRIC
-{
-	struct IIRFILTERL iir;    // Intermediate filter params
-	float frko;      // Offset ratio: float (~0.5)
-	float fscale;    // Scale factor
-	uint32_t adcfil;  // Filtered ADC reading
-	int32_t irko;     // Offset ratio: scale int (~32768)
-	int32_t iI;       // integer result w offset, not final scaling
-};
-
 struct ADCCHANNEL	
 {
 	struct FILTERIIRF1 iir_f1;	// iir_f1 (float) filter
@@ -159,8 +136,7 @@ struct ADCFUNCTION
 	struct ADCGEVCULC lc;    // Local Copy of parameters
 //	struct ADCINTERNAL    intern;// Vref & temperature
 	struct ADCCALCOMMON common;
-	struct ADCABSOLUTE    abs[ADCNUMABS];      // Absolute readings
-	struct ADCRATIOMETRIC ratio[ADCNUMRATIO];  // Ratometric readings
+	struct ADCABSOLUTE  abs[ADCNUMABS];      // Absolute readings
 	struct ADCCHANNEL	 chan[ADC1IDX_ADCSCANSIZE]; // ADC sums, calibrated endpt
 	uint32_t ctr; // Running count of updates.
 	uint32_t idx_xsum;
@@ -192,11 +168,6 @@ extern struct ADCCALCOMMON adcommon;
 
 /* Everything for ADC1. */
 extern struct ADCFUNCTION adc1;
-
-/* Map ADC reading sequence index to Calibration type index 
-   Given: ADC seq index, lookup calibration type array index. */
-extern const int8_t adcmapabs[4];   // Absolute
-extern const int8_t adcmapratio[4]; // Ratiometric
 
 
 #endif

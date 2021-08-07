@@ -24,7 +24,5 @@ osThreadId xADCTaskCreate(uint32_t taskpriority);
 //extern osThreadId ADCTaskHandle;
 extern TaskHandle_t ADCTaskHandle;
 
-extern float fclpos;
-
 #endif
 
