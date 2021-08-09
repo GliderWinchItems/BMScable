@@ -61,9 +61,9 @@ struct ADC1CALINTERNAL
 	p->calintern.iiradctemp.scale = 4;
 
 	// Internal voltage ref: ADC1IDX_INTERNALVREF  5   // IN18     - Internal voltage reference
-	p->calintern.fvdd   = 3.29f;   // Vdd for following Vref ADC reading
+	p->calintern.fvdd   = 3.298f;   // Vdd for following Vref ADC reading
 	p->calintern.adcvdd = 27093;   //(16*1495.5) ADC reading (DMA sum) for above Vdd
-	p->calintern.fvref  = 1.212f;  // reference voltage
+	p->calintern.fvref  = 1.223f;  // reference voltage
 
 	// Internal temperature: ADC1IDX_INTERNALTEMP  4   // IN17     - Internal temperature sensor
 	p->calintern.adcrmtmp  = 17838; // Room temp ADC (DMA sum) reading
@@ -82,88 +82,102 @@ struct ADCCALABS
 };
 */
 // Battery module cell - (sixteen) ADC0 -ADC15
-#define CELLTC 5 // Filter time constant
-	p->cabs[0].iir.k     = CELLTC; // Filter time constant
-	p->cabs[0].iir.scale = 2;      // Filter integer scaling
-	p->cabs[0].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[0].fvn       = 64.0f; // calibration volts
+#define CELLTC 0.99 // Filter time constant
+#define SKIPCT 3    // Ignore initial readings to filter
+	p->cabs[0].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[0].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[0].scale     = 1.2536E-4f; // 
+	p->cabs[0].offset    = 0.0;  // Offset before scale
 
-	p->cabs[1].iir.k     = CELLTC; // Filter time constant
-	p->cabs[1].iir.scale = 2;      // Filter integer scaling
-	p->cabs[1].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[1].fvn       = 64.0f; // calibration volts
+	p->cabs[1].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[1].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[1].scale     = 1.2536E-4f; // 
+	p->cabs[1].offset    = 0.0;  // Offset before scale
 
-	p->cabs[2].iir.k     = CELLTC; // Filter time constant
-	p->cabs[2].iir.scale = 2;      // Filter integer scaling
-	p->cabs[2].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[2].fvn       = 64.0f; // calibration volts
+	p->cabs[2].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[2].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[2].scale     = 1.2536E-4f; // 
+	p->cabs[2].offset    = 0.0;  // Offset before scale
 
-	p->cabs[3].iir.k     = CELLTC; // Filter time constant
-	p->cabs[3].iir.scale = 2;      // Filter integer scaling
-	p->cabs[3].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[3].fvn       = 64.0f; // calibration volts
+	p->cabs[3].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[3].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[3].scale     = 1.2536E-4f; // 
+	p->cabs[3].offset    = 0.0;  // Offset before scale
 
-	p->cabs[4].iir.k     = CELLTC; // Filter time constant
-	p->cabs[4].iir.scale = 2;      // Filter integer scaling
-	p->cabs[4].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[4].fvn       = 64.0f; // calibration volts
+	p->cabs[4].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[4].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[4].scale     = 1.2536E-4f; // 
+	p->cabs[4].offset    = 0.0;  // Offset before scale
 
-	p->cabs[5].iir.k     = CELLTC; // Filter time constant
-	p->cabs[5].iir.scale = 2;      // Filter integer scaling
-	p->cabs[5].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[5].fvn       = 64.0f; // calibration volts
+	p->cabs[5].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[5].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[5].scale     = 1.2536E-4f; // 
+	p->cabs[5].offset    = 0.0;  // Offset before scale
 
-	p->cabs[6].iir.k     = CELLTC; // Filter time constant
-	p->cabs[6].iir.scale = 2;      // Filter integer scaling
-	p->cabs[6].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[6].fvn       = 64.0f; // calibration volts
+	p->cabs[6].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[6].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[6].scale     = 1.2536E-4f; // 
+	p->cabs[6].offset    = 0.0;  // Offset before scale
 
-	p->cabs[7].iir.k     = CELLTC; // Filter time constant
-	p->cabs[7].iir.scale = 2;      // Filter integer scaling
-	p->cabs[7].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[7].fvn       = 64.0f; // calibration volts
+	p->cabs[7].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[7].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[7].scale     = 1.2536E-4f; // 
+	p->cabs[7].offset    = 0.0;  // Offset before scale
 
-	p->cabs[8].iir.k     = CELLTC; // Filter time constant
-	p->cabs[8].iir.scale = 2;      // Filter integer scaling
-	p->cabs[8].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[8].fvn       = 64.0f; // calibration volts
+	p->cabs[8].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[8].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[8].scale     = 1.2536E-4f; // 
+	p->cabs[8].offset    = 0.0;  // Offset before scale
 
-	p->cabs[9].iir.k     = CELLTC; // Filter time constant
-	p->cabs[9].iir.scale = 2;      // Filter integer scaling
-	p->cabs[9].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[9].fvn       = 64.0f; // calibration volts
+	p->cabs[9].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[9].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[9].scale     = 1.2536E-4f; // 
+	p->cabs[9].offset    = 0.0;  // Offset before scale
 
-	p->cabs[10].iir.k     = CELLTC; // Filter time constant
-	p->cabs[10].iir.scale = 2;      // Filter integer scaling
-	p->cabs[10].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[10].fvn       = 64.0f; // calibration volts
+	p->cabs[10].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[10].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[10].scale     = 1.2536E-4f; // 
+	p->cabs[10].offset    = 0.0;  // Offset before scale
 
-	p->cabs[11].iir.k     = CELLTC; // Filter time constant
-	p->cabs[11].iir.scale = 2;      // Filter integer scaling
-	p->cabs[11].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[11].fvn       = 64.0f; // calibration volts
+	p->cabs[11].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[11].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[11].scale     = 1.2536E-4f; // 
+	p->cabs[11].offset    = 0.0;  // Offset before scale
 
-	p->cabs[12].iir.k     = CELLTC; // Filter time constant
-	p->cabs[12].iir.scale = 2;      // Filter integer scaling
-	p->cabs[12].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[12].fvn       = 64.0f; // calibration volts
+	p->cabs[12].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[12].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[12].scale     = 1.2536E-4f; // 
+	p->cabs[12].offset    = 0.0;  // Offset before scale
 
-	p->cabs[13].iir.k     = CELLTC; // Filter time constant
-	p->cabs[13].iir.scale = 2;      // Filter integer scaling
-	p->cabs[13].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[13].fvn       = 64.0f; // calibration volts
+	p->cabs[13].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[13].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[13].scale     = 1.2536E-4f; // 
+	p->cabs[13].offset    = 0.0;  // Offset before scale
 
-	p->cabs[14].iir.k     = CELLTC; // Filter time constant
-	p->cabs[14].iir.scale = 2;      // Filter integer scaling
-	p->cabs[14].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[14].fvn       = 64.0f; // calibration volts
+	p->cabs[14].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[14].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[14].scale     = 1.2536E-4f; // 
+	p->cabs[14].offset    = 0.0;  // Offset before scale
 
-	p->cabs[15].iir.k     = CELLTC; // Filter time constant
-	p->cabs[15].iir.scale = 2;      // Filter integer scaling
-	p->cabs[15].adcvn     = 65394;  // (ADC reading) at calibration volts
-	p->cabs[15].fvn       = 64.0f; // calibration volts
+	p->cabs[15].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[15].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[15].scale     = 1.2536E-4f; // 
+	p->cabs[15].offset    = 0.0;  // Offset before scale
 
+	p->cabs[16].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[16].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[16].scale     = 1.711433E-5f; // 
+	p->cabs[16].offset    = 0.0;  // Offset before scale
 
+	p->cabs[17].iir_f1.coef     = CELLTC; // Filter time constant
+	p->cabs[17].iir_f1.skipctr  = SKIPCT;  // Initial skip
+	p->cabs[17].scale     = (1.0f/(8*16)); // 
+	p->cabs[17].offset    = 0.0;  // Offset before scale
+
+	for (int i = 0; i < 18; i++)
+	{
+		p->cabs[i].iir_f1.onemcoef = 1 - p->cabs[i].iir_f1.coef;
+	}
 
 	return 0;	
 }

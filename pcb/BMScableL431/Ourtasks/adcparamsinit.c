@@ -74,14 +74,9 @@ void adcparamsinit_init(struct ADCFUNCTION* p)
 
 		/* Initialize floating pt iir values for all. (JIC) */
 	int i;
-	for (i = 0; i < ADC1IDX_ADCSCANSIZE; i++)
+	for (i = 0; i < (ADC1IDX_ADCSCANSIZE + 2); i++)
 	{ // Initialize all with default. ==> Others can change it later <==
-		p->chan[i].iir_f1.skipctr  = 8;    // Initial readings skip count
-		p->chan[i].iir_f1.coef     = 0.999;  // Filter coefficient (< 1.0)
 		p->chan[i].iir_f1.onemcoef = (1 - p->chan[i].iir_f1.coef); // Pre-computed
-
-		// Absolute measurements for all
-		abs_init(p, i);	
 	}
 
 
@@ -93,6 +88,7 @@ void adcparamsinit_init(struct ADCFUNCTION* p)
  * @param	: p = Points to struct with "everything" for this ADC module
  * @param	: idx1 = index in ADC sequence array
  * *************************************************************************/
+#ifdef USEABS_INIT
 static void abs_init(struct ADCFUNCTION* p, int8_t idx1)
 {
 /* Reproduced for convenience
@@ -112,10 +108,11 @@ struct ADCABSOLUTE
 	struct ADCABSOLUTE*    pabs = &p->abs[idx1]; // Working param
 	struct ADCCALABS* plc  = &p->lc.cabs[idx1]; // Calibration param
 	
-	pabs->iir.pprm = &plc->iir; // Filter param pointer
+	pabs->iir.pprm = &plc->iir_f1; // Filter param pointer
 	pabs->k   = (plc->fvn / p->common.fvref) * (p->common.fadc / plc->adcvn);
 	pabs->fscale = pabs->k * p->common.fvref;
 	p->chan[idx1].fscale = pabs->k; // Save in channel array
 	return;
 }
+#endif
 

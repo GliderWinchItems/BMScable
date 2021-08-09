@@ -42,6 +42,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
+#define DEFAULTTASKBIT00 (1 << 0)  // Task notification bit (from ADCtask.c)
 
 /* USER CODE END EC */
 

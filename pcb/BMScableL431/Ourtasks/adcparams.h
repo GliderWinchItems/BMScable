@@ -32,9 +32,9 @@ Compute
 #include "iir_f1.h"
 #include "adc_idx_v_struct.h"
 
-#define ADC1DMANUMSEQ        16 // Number of DMA scan sequences in 1/2 DMA buffer
+#define ADC1DMANUMSEQ        1 // Number of DMA scan sequences in 1/2 DMA buffer
 #define ADCEXTENDSUMCT       64 // Sum of 1/2 DMA sums for additional averaging
-#define ADC1IDX_ADCSCANSIZE  18 // Number ADC channels read (autoinject includes Vref an Vtemp)
+#define ADC1IDX_ADCSCANSIZE  16 // Number ADC channels read (excludes autoinject Vref an Vtemp)
 #define ZTOLERANCE         0.05 // +/- tolerance for re-adjustment of Hall_effect sensor zero
 #define ADCSCALEbits         15 // 2^x scale large
 
@@ -83,6 +83,10 @@ struct ADCCALCOMMON
 	float degC;          // Temperature: degrees C
 	float degCfilt;      // Temperature: degrees C, filtered
  	uint32_t dmact;      // DMA interrupt running counter
+ 	uint32_t dmact2;      // DMA interrupt running counter 2nd 1/2
+
+ 	uint32_t vref_sum;
+ 	uint32_t vtemp_sum;
 
 	// For integer computation (much faster)
 	uint32_t uicaldiff;
@@ -117,15 +121,14 @@ struct ADCCHANNEL
 {
 	struct FILTERIIRF1 iir_f1;	// iir_f1 (float) filter
 	float    fscale;  // Scale factor
-	uint32_t xsum[2]; // Extended sum
-	uint16_t sum;     // Sum of 1/2 DMA buffer
+	float    offset;  // Offset
 };
 
 /* struct allows pointer to access raw and calibrated ADC1 data. */
 struct ADC1DATA
 {
-  union ADCCALREADING adc1calreading[ADC1IDX_ADCSCANSIZE]; // Calibrated readings
-  union ADCCALREADING adc1calreadingfilt[ADC1IDX_ADCSCANSIZE]; // Calibrated readings: filtered
+  union ADCCALREADING adc1calreading[ADC1IDX_ADCSCANSIZE+2]; // Calibrated readings
+  union ADCCALREADING adc1calreadingfilt[ADC1IDX_ADCSCANSIZE+2]; // Calibrated readings: filtered
   uint32_t ctr; // Running count of updates.
   uint16_t adcs1sum[ADC1IDX_ADCSCANSIZE]; // Sum of 1/2 DMA buffer for each channel
 };
@@ -137,7 +140,7 @@ struct ADCFUNCTION
 //	struct ADCINTERNAL    intern;// Vref & temperature
 	struct ADCCALCOMMON common;
 	struct ADCABSOLUTE  abs[ADCNUMABS];      // Absolute readings
-	struct ADCCHANNEL	 chan[ADC1IDX_ADCSCANSIZE]; // ADC sums, calibrated endpt
+	struct ADCCHANNEL	chan[ADC1IDX_ADCSCANSIZE+2]; // ADC sums, calibrated endpt
 	uint32_t ctr; // Running count of updates.
 	uint32_t idx_xsum;
 };

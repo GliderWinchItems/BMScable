@@ -6,7 +6,7 @@
 #include "adcfastsum16.h"
 /* *************************************************************************
  * void adcfastsum16(struct ADCCHANNEL* pchan, uint16_t* pdma);
- *	@brief	: Inline fast summation: ASSUMES 16 ADC sequences: channels: ADC1IDX_ADCSCANSIZE
+ *	@brief	: Inline fast summation: ASSUMES 16 ADC =>sequences<=: channels = ADC1IDX_ADCSCANSIZE
  * @param	: pchan = pointer to stuct array for adc1 channels
  * @param	: pdma  = pointer to dma buffer
  * *************************************************************************/

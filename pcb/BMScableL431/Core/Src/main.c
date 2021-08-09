@@ -36,8 +36,8 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 
-#include "ADCTask.h"
 #include "adcparams.h"
+#include "ADCTask.h"
 
 
 
@@ -272,7 +272,7 @@ static void MX_ADC1_Init(void)
   /** Common config
   */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV4;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
@@ -285,7 +285,11 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
-  hadc1.Init.OversamplingMode = DISABLE;
+  hadc1.Init.OversamplingMode = ENABLE;
+  hadc1.Init.Oversampling.Ratio = ADC_OVERSAMPLING_RATIO_8;
+  hadc1.Init.Oversampling.RightBitShift = ADC_RIGHTBITSHIFT_NONE;
+  hadc1.Init.Oversampling.TriggeredMode = ADC_TRIGGEREDMODE_SINGLE_TRIGGER;
+  hadc1.Init.Oversampling.OversamplingStopReset = ADC_REGOVERSAMPLING_RESUMED_MODE;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     Error_Handler();
@@ -297,7 +301,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_640CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_247CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
@@ -429,7 +433,7 @@ static void MX_ADC1_Init(void)
   */
   sConfigInjected.InjectedChannel = ADC_CHANNEL_VREFINT;
   sConfigInjected.InjectedRank = ADC_INJECTED_RANK_1;
-  sConfigInjected.InjectedSamplingTime = ADC_SAMPLETIME_640CYCLES_5;
+  sConfigInjected.InjectedSamplingTime = ADC_SAMPLETIME_247CYCLES_5;
   sConfigInjected.InjectedSingleDiff = ADC_SINGLE_ENDED;
   sConfigInjected.InjectedOffsetNumber = ADC_OFFSET_NONE;
   sConfigInjected.InjectedOffset = 0;
@@ -439,13 +443,16 @@ static void MX_ADC1_Init(void)
   sConfigInjected.QueueInjectedContext = DISABLE;
   sConfigInjected.ExternalTrigInjecConv = ADC_INJECTED_SOFTWARE_START;
   sConfigInjected.ExternalTrigInjecConvEdge = ADC_EXTERNALTRIGINJECCONV_EDGE_NONE;
-  sConfigInjected.InjecOversamplingMode = DISABLE;
+  sConfigInjected.InjecOversamplingMode = ENABLE;
+  sConfigInjected.InjecOversampling.Ratio = ADC_OVERSAMPLING_RATIO_8;
+  sConfigInjected.InjecOversampling.RightBitShift = ADC_RIGHTBITSHIFT_NONE;
   if (HAL_ADCEx_InjectedConfigChannel(&hadc1, &sConfigInjected) != HAL_OK)
   {
     Error_Handler();
   }
   /** Configure Injected Channel
   */
+  sConfigInjected.InjectedChannel = ADC_CHANNEL_TEMPSENSOR;
   sConfigInjected.InjectedRank = ADC_INJECTED_RANK_2;
   if (HAL_ADCEx_InjectedConfigChannel(&hadc1, &sConfigInjected) != HAL_OK)
   {
@@ -590,8 +597,11 @@ static void MX_GPIO_Init(void)
   * @param  argument: Not used
   * @retval None
   */
-uint32_t mctr = 22; // Debugging counter
-double fctr = 3.1415926535897932384;
+uint32_t mctr = 0; // Debugging counter
+uint32_t lctr = 20;
+uint32_t ratectr = 0;
+uint16_t* pjdr1 = (uint16_t*)(0x50040000 + 0x80); // Vrefint
+uint16_t* pjdr2 = (uint16_t*)(0x50040000 + 0x80 + 0x04); // Vtemp
 
 char* test = "Quick Brown fox jumped over the lazy dogs back 0123456789\n\r";
 
@@ -599,43 +609,113 @@ char* test = "Quick Brown fox jumped over the lazy dogs back 0123456789\n\r";
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
+  uint32_t noteval = 0;
+  uint8_t ledseq = 0;
 
-  struct SERIALSENDTASKBCB* pbuf1 = getserialbuf(&HUARTMON,96);
+  struct SERIALSENDTASKBCB* pbuf1 = getserialbuf(&HUARTMON,256);
   if (pbuf1 == NULL) morse_trap(115);
-//struct SERIALSENDTASKBCB* pbuf2 = getserialbuf(&HUARTMON,96);
-//  if (pbuf2 == NULL) morse_trap(116);
+  struct SERIALSENDTASKBCB* pbuf2 = getserialbuf(&HUARTMON,256);
+  if (pbuf2 == NULL) morse_trap(116);
 
   yprintf(&pbuf1,"\n\rBegin %d",mctr++);
 
   /* Infinite loop */
   for(;;)
   {
-#define ASDFASDFA
-#ifdef ASDFASDFA    
-    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_SET); // RED LED OFF
-    vTaskDelay(500);
 
-    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_RESET); // RED LED ON
-    vTaskDelay(500);
- 
+        /* Wait for ADC new adc data (ADCTask.c) */
+    xTaskNotifyWait(0,0xffffffff, &noteval, portMAX_DELAY);
 
-   HAL_GPIO_WritePin(GPIOB,GPIO_PIN_3,GPIO_PIN_SET); // GRN LED OFF
-    vTaskDelay(500);
+   if (noteval & DEFAULTTASKBIT00)
+   {
+      ratectr += 1;
+      if (ratectr < 10) continue;
+    
+    ratectr = 0;
+        
+    switch (ledseq++)
+    {
+    case 0:
+     HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_SET); // RED LED OFF
+      break;
+    case 1:
+      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_RESET); // RED LED ON
+      break; 
+    case 2:
+      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_3,GPIO_PIN_SET); // GRN LED OFF
+      break;
+    case 3:
+      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_3,GPIO_PIN_RESET); // GRN LED ON
+      break;
+    } if (ledseq > 3) ledseq = 0;
 
-   HAL_GPIO_WritePin(GPIOB,GPIO_PIN_3,GPIO_PIN_RESET); // GRN LED ON
-    vTaskDelay(500);
+    uint8_t idxsum = adcsumidx ^ 1;
+//#define SUMMEDINTEGER
+#ifdef  SUMMEDINTEGER    
+    uint32_t* psum = &adcsumdb[idxsum][0];
+
+  yprintf(&pbuf1,"\n\r%3u:%6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u",
+    (adcommon.dmact - mctr),
+    *(psum + 0), 
+    *(psum + 1), 
+    *(psum + 2), 
+    *(psum + 3), 
+    *(psum + 4), 
+    *(psum + 5), 
+    *(psum + 6), 
+    *(psum + 7), 
+    *(psum + 8), 
+    *(psum + 9), 
+    *(psum + 10), 
+    *(psum + 11), 
+    *(psum + 12), 
+    *(psum + 13), 
+    *(psum + 14), 
+    *(psum + 15), 
+    *(psum + 16), 
+    *(psum + 17));
+  mctr = adcommon.dmact;
+
+#else
+  float* pfsum =  &adcsumfilt[idxsum][0];
+  yprintf(&pbuf1,"\n\rX%3u:%6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f",
+    (adcommon.dmact - mctr),
+    *(pfsum + 0), 
+    *(pfsum + 1), 
+    *(pfsum + 2), 
+    *(pfsum + 3), 
+    *(pfsum + 4), 
+    *(pfsum + 5), 
+    *(pfsum + 6), 
+    *(pfsum + 7), 
+    *(pfsum + 8), 
+    *(pfsum + 9), 
+    *(pfsum + 10), 
+    *(pfsum + 11), 
+    *(pfsum + 12), 
+    *(pfsum + 13), 
+    *(pfsum + 14), 
+    *(pfsum + 15), 
+    *(pfsum + 16), 
+    *(pfsum + 17));
+  mctr = adcommon.dmact;
+
+
 #endif
- //   vTaskDelay(1000);
 
-//  yprintf(&pbuf1,"\n\r Hello World1  %d",mctr++);
-  yprintf(&pbuf1,"\n\rHello World2 %d %22.19f",mctr++, fctr);
-  fctr += 0.1f;
 
- 
 
-//   yprintf(&pbuf1,"\n\r good bye to %d",mctr++);
- //  yprintf(&pbuf2,"\n\r buf2....... %d",mctr++);
+  // Vref and Vtemp registers
+  yprintf(&pbuf2," : %6u %6u",*pjdr1, *(pjdr1+2));
 
+extern uint32_t dwtdiff;
+char * adcnum = {"  1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16  VREFINT  VTEMP"};
+  if (lctr++ > 8)
+  {
+    lctr = 0;
+   yprintf(&pbuf2,"\n\r\n%5d %s",dwtdiff,adcnum);
+  }
+ }
   }
   /* USER CODE END 5 */
 }

@@ -25,7 +25,7 @@ Voltage at 25 °C 1.34 1.43 1.52
 #define __ADC_IDX_V_STRUCT
 
 /* These set the sizes of in "struct ADCFUNCTION" below */
-#define ADCNUMABS   16  // Number of Absolute calibrated readings
+#define ADCNUMABS   18  // Number of Absolute calibrated readings
 #define ADCNUMRATIO 1  // Number of Ratiometric calibrated readings
 
 /* Parameters for ADC reading */
@@ -54,9 +54,9 @@ adjusted for temperature by using the internal temperature reference.
 */
 struct ADCCALABS
 {
-	struct IIR_L_PARAM iir; // Filter: Time constant, integer scaling
-	uint32_t adcvn;    // (ADC reading) vn 
-    float    fvn;      // (float) measured vn (volts)
+	struct FILTERIIRF1 iir_f1; // Filter: Time constant, integer scaling
+	float  scale;
+	float  offset;
 };
 
 /* 5v supply ratiometric calibration, e.g. Hall effect sensors. */

@@ -100,7 +100,7 @@ adcdbg1 = DTWTIME;
 struct ADCCALCOMMON* pacom = &padc1->common;
 
 /* The following two computaions with ints uses 119 machines cycles. */
-	pacom->ivdd = pacom->fvref / (padc1->chan[ADC1IDX_INTERNALVREF].sum);
+//	pacom->ivdd = pacom->fvref / (padc1->chan[ADC1IDX_INTERNALVREF].sum);
 
 //	pacom->ui_tmp = (pacom->ivdd * padc1->chan[ADC1IDX_INTERNALTEMP].sum ) / VREFCALVOLT; // Adjust for Vdd not at 3.0v calibration
 //	pacom->degC  = pacom->ll_80caldiff * (pacom->ui_tmp - pacom->ui_cal1) + (30 * SCALE1 * ADC1DMANUMSEQ);
@@ -138,6 +138,7 @@ adcdbg2 = DTWTIME - adcdbg1;
 Vn = Vref * (ADC[n]/ADC[vref]) * ((R1+R2)/R2);
   Where: ((R1+R2)/R2) is resistor divider scale factor 
 */
+#ifdef USE_ABSOLUTE
 static void absolute(struct ADCFUNCTION* p, uint8_t idx)
 {
 	if (adcmapabs[idx] < 0) morse_trap(57); // Illegal index: Coding problem
@@ -149,6 +150,7 @@ static void absolute(struct ADCFUNCTION* p, uint8_t idx)
 	pa->ival = ((1<<ADCSCALEbits) * pa->adcfil) / p->common.adccmpvref;
 	return;
 }
+#endif
 /* *************************************************************************
  * static void ratiometric5v(struct ADCFUNCTION* p, uint8_t idx);
  *	@brief	: Calibrate and filter 5v ratiometric (e.g. Hall-effect sensor) reading

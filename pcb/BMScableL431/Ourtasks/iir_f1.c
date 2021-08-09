@@ -19,6 +19,10 @@ float iir_f1_f(struct FILTERIIRF1* pfc, float flt)
 	if (pfc->skipctr > 0)
 	{ // Here, skip starting filter until a few readings
 		pfc->skipctr -= 1;
+		if (flt == 0)
+		{
+			return 0;
+		}
 		pfc->z1 = flt / pfc->onemcoef;
 	}
 	else
