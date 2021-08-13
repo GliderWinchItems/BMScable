@@ -1,0 +1,154 @@
+STM32L431_notes.txt
+07/29/2021
+
+STM32L431 setup notes
+
+1. Get latest repp
+
+git clone git://git.code.sf.net/p/openocd/code openocd
+
+Git pull can be used to update later.
+
+2. Build openocde 0.11.0
+
+./bootstrap
+./configure
+make
+sudo make install
+
+ 3. Update scripts in /usr/share/openocd
+
+cd /usr/share/openocd/scripts
+cp ~/openocd/tcl/target .
+cp ~/openocd/tcl/board  .
+cp ~/openocd/tcl/interface .
+
+4. Pull jumpers from Nucleo or Discovery board to enable SWD
+
+5. On Nucleo, jumper U5V on jp5 to power ST-Link
+
+6. SWD<->STM32L431 board cable
+
+Nucleo (or Discovery) board
+||     || STM32L431 board
+ 1 - Not used
+ 2 -    2  SWCLK  (GRY)
+ 3 -    1  GND    (BLK)
+ 4 -    3  SWDIO  (WHT)
+ 5 - Not used
+ 6 - Not used
+
+7. Powering
+
+- Plug in USB to ST-Link port
+  Nucleo (programmed as received) has a green led that flashes
+  Nucleo Big Red/grn led lights red
+
+- Power board with STM32L431
+
+8. Run openocd
+
+- 
+openocd -f interface/stlink.cfg -f target/stm32l4x.cfg
+Open On-Chip Debugger 0.11.0+dev-00282-gae6de2f93-dirty (2021-07-29-16:35)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : auto-selecting first available session transport "hla_swd". To override use 'transport select <transport>'.
+Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD
+Info : DEPRECATED target event trace-config
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : clock speed 500 kHz
+Info : STLINK V2J38M27 (API v2) VID:PID 0483:374B
+Info : Target voltage: 3.255445
+Info : stm32l4x.cpu: hardware has 6 breakpoints, 4 watchpoints
+Info : starting gdb server for stm32l4x.cpu on 3333
+Info : Listening on port 3333 for gdb connections
+
+[Sucess in connecting]
+
+Run telnet in a separate terminal
+telnet 4444
+
+
+The server terminal window above will show telnet connecting--
+Info : accepting 'telnet' connection on tcp/4444
+
+The telnet window will show a > prompt.
+
+9. Create script in ~/bin
+
+cd ~/bin
+echo "openocd -f interface/stlink.cfg -f target/stm32l4x.cfg" > openocdstartL431
+chmod +x openocdstartL431
+
+Quick link script in ~/bin: openocdstartL431
+
+10. Scripts
+
+Update program name
+
+script_all
+script_flash
+
+11. morse.ch
+
+Change sense of ON/OFF for LEDs
+Change speed of 'ticks' for processor (80 MHz)
+
+Both LEDs have 3.3K resistor. RED led is not as bright as GRN.
+
+12. MX version migration
+
+Stay with old version for previous repos.
+Latest versions brings up "download" or "migrate" option--download.
+
+13. UART DMA setup: RX/TX 
+
+Get the circular correct or the last output line keeps repeating!
+
+14. Morse trap for hard faults
+
+Copy morse_trap and asm code from previous versions to stm32l4xx_it.c
+
+15. printf of floats--https://github.com/leech001/STM32-FreeRTOS-float
+
+---------------------------------------------------
+Attention: This repository has been archived!
+New version of STM32CubeMX generate correct code for GCC(newlib) to use float and double (converting values to char type) under FreeRTOS use printf, sprintf, snprintf.
+Configuring STM32 to work with float and double (converting values to char type) under FreeRTOS use printf, sprintf, snprintf.
+
+If you use standard tools for converting float and double to char type such as printf, sprintf, snprintf, then when you run these conversions under FreeRTOS and using the GNU Arm Embedded Toolchain (https://developer.arm.com/tools-and-software/ open-source-software / developer-tools / gnu-toolchain / gnu-rm) the microcontroller hangs and a Hard Fault error occurs. According to research on this topic http://www.nadler.com/embedded/newlibAndFreeRTOS.html, this error is associated with incorrect operation of dynamic memory allocation (malloc / malloc_r).
+
+Source code https://github.com/DRNadler/FreeRTOS_helpers
+
+How is it all corrected.
+
+    Remove the heap_4.c file from the \Middlewares\Third_Party\FreeRTOS\Source\portable\MemMang\ directory of your project
+    Copy the heap_useNewlib_ST.c file from the given repository (src) to the above directory(src);
+    Comment or delete define function caddr_t _sbrk(int incr) in file Core\Src\syscalls.c
+    Open the FreeRTOS configuration file (FreeRTOSConfig.h) and add an additional define to the section;
+
+/* USER CODE BEGIN Defines */   	      
+/* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
+
+#define configUSE_NEWLIB_REENTRANT 1
+
+/* USER CODE END Defines */
+
+Remember to enable the extra option for the "-u _printf_float" compiler.
+
+This completes the setup. Compilation and operation of the printf, sprintf, snprintf functions should occur without hovering and Hard Fault.
+Do not forget that when you re-generate the project in STM32CubeMX, the procedure will need to be repeated!
+
+p.s. The version of the heap_useNewlib_ST.c file provided in this repository is slightly different from the original (https://github.com/DRNadler/FreeRTOS_helpers) in terms of fixing compilation errors. It was tested on the following versions of the STM32F401CCU6 microcontrollers under Windows 10 and Ubuntu 20.04
+-------------------------------------------------------------------
+
+===> the above wasn't working, but found in ST Community to use heap_3 instead of heap_4. 
+DFLAGS = $(MCU) -u _printf_float -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+
+HOWEVER! Regenerating 'MX with (adavanced/newlib option) REENTRANT enabled and disabled, and various heap_x it continue to work. ??? Left it with REENTRANT enabled and heap_4
+
+
+

@@ -82,86 +82,88 @@ struct ADCCALABS
 };
 */
 // Battery module cell - (sixteen) ADC0 -ADC15
-#define CELLTC 0.99 // Filter time constant
+#define CELLTC 0.995 // Filter time constant
 #define SKIPCT 3    // Ignore initial readings to filter
+#define DEFAULTSCALE 1.253600E-04 // Base on nominal values
+	
 	p->cabs[0].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[0].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[0].scale     = 1.2536E-4f; // 
+	p->cabs[0].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[0].offset    = 0.0;  // Offset before scale
 
 	p->cabs[1].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[1].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[1].scale     = 1.2536E-4f; // 
+	p->cabs[1].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[1].offset    = 0.0;  // Offset before scale
 
 	p->cabs[2].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[2].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[2].scale     = 1.2536E-4f; // 
+	p->cabs[2].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[2].offset    = 0.0;  // Offset before scale
 
 	p->cabs[3].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[3].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[3].scale     = 1.2536E-4f; // 
+	p->cabs[3].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[3].offset    = 0.0;  // Offset before scale
 
 	p->cabs[4].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[4].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[4].scale     = 1.2536E-4f; // 
+	p->cabs[4].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[4].offset    = 0.0;  // Offset before scale
 
 	p->cabs[5].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[5].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[5].scale     = 1.2536E-4f; // 
+	p->cabs[5].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[5].offset    = 0.0;  // Offset before scale
 
 	p->cabs[6].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[6].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[6].scale     = 1.2536E-4f; // 
+	p->cabs[6].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[6].offset    = 0.0;  // Offset before scale
 
 	p->cabs[7].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[7].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[7].scale     = 1.2536E-4f; // 
+	p->cabs[7].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[7].offset    = 0.0;  // Offset before scale
 
 	p->cabs[8].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[8].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[8].scale     = 1.2536E-4f; // 
+	p->cabs[8].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[8].offset    = 0.0;  // Offset before scale
 
 	p->cabs[9].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[9].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[9].scale     = 1.2536E-4f; // 
+	p->cabs[9].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[9].offset    = 0.0;  // Offset before scale
 
 	p->cabs[10].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[10].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[10].scale     = 1.2536E-4f; // 
+	p->cabs[10].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[10].offset    = 0.0;  // Offset before scale
 
 	p->cabs[11].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[11].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[11].scale     = 1.2536E-4f; // 
+	p->cabs[11].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[11].offset    = 0.0;  // Offset before scale
 
 	p->cabs[12].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[12].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[12].scale     = 1.2536E-4f; // 
+	p->cabs[12].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[12].offset    = 0.0;  // Offset before scale
 
 	p->cabs[13].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[13].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[13].scale     = 1.2536E-4f; // 
+	p->cabs[13].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[13].offset    = 0.0;  // Offset before scale
 
 	p->cabs[14].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[14].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[14].scale     = 1.2536E-4f; // 
+	p->cabs[14].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[14].offset    = 0.0;  // Offset before scale
 
 	p->cabs[15].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[15].iir_f1.skipctr  = SKIPCT;  // Initial skip
-	p->cabs[15].scale     = 1.2536E-4f; // 
+	p->cabs[15].scale     = DEFAULTSCALE; // Apply calibration below 
 	p->cabs[15].offset    = 0.0;  // Offset before scale
 
 	p->cabs[16].iir_f1.coef     = CELLTC; // Filter time constant
@@ -173,6 +175,68 @@ struct ADCCALABS
 	p->cabs[17].iir_f1.skipctr  = SKIPCT;  // Initial skip
 	p->cabs[17].scale     = (1.0f/(8*16)); // 
 	p->cabs[17].offset    = 0.0;  // Offset before scale
+
+/* Unless the board number is defined the default
+   calibrations (above) will be used.
+
+   To assist calibration the spreadsheet 
+   ../calibration.boards.ods
+   can be used to generate the following, by copying
+   the readings from a copy & paste of minicom output.
+
+   NOTE: The right arrow from the spreadsheet requires
+   is an escaped character \342 and requiresreplacement 
+   with '->'
+*/
+#define BOARD_NUMBER_1
+/* Calibration: Copy & paste from spreadsheet */
+#ifdef BOARD_NUMBER_2
+p->cabs[0].scale =		1.227286E-04	;
+p->cabs[1].scale =		1.236577E-04	;
+p->cabs[2].scale =		1.234556E-04	;
+p->cabs[3].scale =		1.235455E-04	;
+p->cabs[4].scale =		1.236471E-04	;
+p->cabs[5].scale =		1.225917E-04	;
+p->cabs[6].scale =		1.225803E-04	;
+p->cabs[7].scale =		1.237470E-04	;
+p->cabs[8].scale =		1.226385E-04	;
+p->cabs[9].scale =		1.236088E-04	;
+p->cabs[10].scale =		1.231935E-04	;
+p->cabs[11].scale =		1.214884E-04	;
+p->cabs[12].scale =		1.239065E-04	;
+p->cabs[13].scale =		1.216815E-04	;
+p->cabs[14].scale =		1.220047E-04	;
+p->cabs[15].scale =		1.225867E-04	;
+p->cabs[16].scale =		1.709153E-05	;
+p->cabs[17].scale =		0.0078125	;
+#else
+	#ifdef BOARD_NUMBER_1
+p->cabs[0].scale =		1.238235E-04	;
+p->cabs[1].scale =		1.236132E-04	;
+p->cabs[2].scale =		1.223250E-04	;
+p->cabs[3].scale =		1.239523E-04	;
+p->cabs[4].scale =		1.227408E-04	;
+p->cabs[5].scale =		1.207100E-04	;
+p->cabs[6].scale =		1.223305E-04	;
+p->cabs[7].scale =		1.226644E-04	;
+p->cabs[8].scale =		1.218121E-04	;
+p->cabs[9].scale =		1.224693E-04	;
+p->cabs[10].scale =		1.223630E-04	;
+p->cabs[11].scale =		1.224680E-04	;
+p->cabs[12].scale =		1.220257E-04	;
+p->cabs[13].scale =		1.217413E-04	;
+p->cabs[14].scale =		1.222153E-04	;
+p->cabs[15].scale =		1.211893E-04	;
+p->cabs[16].scale =		1.714197E-05	;
+p->cabs[17].scale =		0.0078125	;
+	#else
+	#error BOARD_1 or BOARD_2 (calibration selection) not specified
+	#endif
+#endif	
+
+
+
+
 
 	for (int i = 0; i < 18; i++)
 	{

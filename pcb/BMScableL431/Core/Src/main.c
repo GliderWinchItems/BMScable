@@ -678,7 +678,7 @@ void StartDefaultTask(void *argument)
 
 #else
   float* pfsum =  &adcsumfilt[idxsum][0];
-  yprintf(&pbuf1,"\n\rX%3u:%6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f",
+  yprintf(&pbuf1,"\n\rX%3u:%7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f",
     (adcommon.dmact - mctr),
     *(pfsum + 0), 
     *(pfsum + 1), 
@@ -708,12 +708,13 @@ void StartDefaultTask(void *argument)
   // Vref and Vtemp registers
   yprintf(&pbuf2," : %6u %6u",*pjdr1, *(pjdr1+2));
 
-extern uint32_t dwtdiff;
-char * adcnum = {"  1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16  VREFINT  VTEMP"};
-  if (lctr++ > 8)
+extern uint32_t dwtdiff; 
+char * adcnum = {"   1       2       3       4       5       6       7       8       9      10      11      12      13      14      15      16  VREFINT    VTEMP"};
+  lctr += 1;
+  if (lctr >= 8)
   {
     lctr = 0;
-   yprintf(&pbuf2,"\n\r\n%5d %s",dwtdiff,adcnum);
+    yprintf(&pbuf2,"\n\r\n%5d %s",dwtdiff,adcnum);
   }
  }
   }

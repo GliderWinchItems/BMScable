@@ -1,0 +1,23 @@
+ADCxIN-vs-portpin.txt
+02/21/21
+
+ADCx_IN
+
+   L431  F405
+0   ...  PA0
+1   PC0  PA1
+2   PC1  PA2
+3   PC2  PA3
+4   PC3  PA4
+5   PA0  PA5
+6   PA1  PA6
+7   PA2  PA7
+8   PA3  PB0
+9   PA4  PB1
+10  PA5  PC0
+11  PA6  PC1
+12  PA7  PC2
+13  PC4  PC3
+14  PC5  PC4
+15  PB0  PC5
+16  PB1  ...
