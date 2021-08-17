@@ -14,6 +14,25 @@ The time constant is the reciprocal of the radian bandwidth so about 6 ms. The 1
 Since those outputs are at a 64 Hz rate (15.6 ms period), that seems like a pretty reasonable value for K.
 
 */
+/* Indices to map to cell numbering 0 -15 */
+uint8_t adc_map[16] = {
+12,
+14,
+8,
+10,
+4,
+6,
+0,
+2,
+13,
+15,
+9,
+11,
+5,
+7,
+3,
+1
+};
 
 /* **************************************************************************************
  * int adc_idx_v_struct_hardcode_params(struct ADCGEVCULC* p);
@@ -82,9 +101,9 @@ struct ADCCALABS
 };
 */
 // Battery module cell - (sixteen) ADC0 -ADC15
-#define CELLTC 0.995 // Filter time constant
+#define CELLTC 0.98f // Filter time constant
 #define SKIPCT 3    // Ignore initial readings to filter
-#define DEFAULTSCALE 1.253600E-04 // Base on nominal values
+#define DEFAULTSCALE 1.253600E-04f // Base on nominal values
 	
 	p->cabs[0].iir_f1.coef     = CELLTC; // Filter time constant
 	p->cabs[0].iir_f1.skipctr  = SKIPCT;  // Initial skip
@@ -211,26 +230,28 @@ p->cabs[16].scale =		1.709153E-05	;
 p->cabs[17].scale =		0.0078125	;
 #else
 	#ifdef BOARD_NUMBER_1
-p->cabs[0].scale =		1.238235E-04	;
-p->cabs[1].scale =		1.236132E-04	;
-p->cabs[2].scale =		1.223250E-04	;
-p->cabs[3].scale =		1.239523E-04	;
-p->cabs[4].scale =		1.227408E-04	;
-p->cabs[5].scale =		1.207100E-04	;
-p->cabs[6].scale =		1.223305E-04	;
-p->cabs[7].scale =		1.226644E-04	;
-p->cabs[8].scale =		1.218121E-04	;
-p->cabs[9].scale =		1.224693E-04	;
-p->cabs[10].scale =		1.223630E-04	;
-p->cabs[11].scale =		1.224680E-04	;
-p->cabs[12].scale =		1.220257E-04	;
-p->cabs[13].scale =		1.217413E-04	;
-p->cabs[14].scale =		1.222153E-04	;
-p->cabs[15].scale =		1.211893E-04	;
-p->cabs[16].scale =		1.714197E-05	;
+p->cabs[0].scale =		1.225140E-04	;
+p->cabs[1].scale =		1.209167E-04	;
+p->cabs[2].scale =		1.198470E-04	;
+p->cabs[3].scale =		1.218922E-04	;
+p->cabs[4].scale =		1.216409E-04	;
+p->cabs[5].scale =		1.214441E-04	;
+p->cabs[6].scale =		1.202031E-04	;
+p->cabs[7].scale =		1.211316E-04	;
+p->cabs[8].scale =		1.209244E-04	;
+p->cabs[9].scale =		1.216035E-04	;
+p->cabs[10].scale =		1.223546E-04	;
+p->cabs[11].scale =		1.218412E-04	;
+p->cabs[12].scale =		1.221481E-04	;
+p->cabs[13].scale =		1.209803E-04	;
+p->cabs[14].scale =		1.220501E-04	;
+p->cabs[15].scale =		1.217526E-04	;
+p->cabs[16].scale =		1.217526E-04	;
 p->cabs[17].scale =		0.0078125	;
+
+
 	#else
-	#error BOARD_1 or BOARD_2 (calibration selection) not specified
+//	#error BOARD_1 or BOARD_2 (calibration selection) not specified
 	#endif
 #endif	
 

@@ -28,6 +28,8 @@ Voltage at 25 °C 1.34 1.43 1.52
 #define ADCNUMABS   18  // Number of Absolute calibrated readings
 #define ADCNUMRATIO 1  // Number of Ratiometric calibrated readings
 
+
+
 /* Parameters for ADC reading */
 // Flointing pt params are converted to scaled integers during initialization
 
@@ -55,8 +57,9 @@ adjusted for temperature by using the internal temperature reference.
 struct ADCCALABS
 {
 	struct FILTERIIRF1 iir_f1; // Filter: Time constant, integer scaling
-	float  scale;
-	float  offset;
+	float  scale2;  // X^2
+	float  scale;   // X^1
+	float  offset;  // X^0
 };
 
 /* 5v supply ratiometric calibration, e.g. Hall effect sensors. */
@@ -92,5 +95,7 @@ int adc_idx_v_struct_hardcode_params(struct ADCGEVCULC* p);
 /* @brief	: Hard-code load local copy with parameters
  * @return	: 0
  * ************************************************************************************** */
+
+extern uint8_t adc_map[16];
 #endif
 

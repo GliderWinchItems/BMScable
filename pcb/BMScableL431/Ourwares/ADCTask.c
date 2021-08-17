@@ -125,7 +125,9 @@ dwt2 = dwt1;
 			for (int i = 0; i < 18; i++)
 			{ // Calibrate and filter sums
 				ftmp = *(padcsum + i);
-				ftmp = (ftmp - adc1.lc.cabs[i].offset) * adc1.lc.cabs[i].scale;
+				// y = a + b * x;
+//				ftmp =  adc1.lc.cabs[i].scale * ftmp;
+				ftmp = adc1.lc.cabs[i].offset + adc1.lc.cabs[i].scale * ftmp;
 				//*(padcfilt + i) = ftmp;
 				*(padcfilt + i) = iir_f1_f(&adc1.lc.cabs[i].iir_f1, ftmp);
 			}
