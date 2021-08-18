@@ -93,6 +93,8 @@ struct ADCCALCOMMON
 	int64_t ll_80caldiff;
 	uint32_t ui_cal1;
 	uint32_t ui_tmp;
+
+
 };
 
 struct ADCVTEMPVREF

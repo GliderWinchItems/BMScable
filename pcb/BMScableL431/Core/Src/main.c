@@ -603,6 +603,7 @@ uint32_t ratectr = 0;
 uint16_t* pjdr1 = (uint16_t*)(0x50040000 + 0x80); // Vrefint
 uint16_t* pjdr2 = (uint16_t*)(0x50040000 + 0x80 + 0x04); // Vtemp
 uint8_t diff = 0; // yprintf switch lines
+uint8_t fet = 0;
 
 char* test = "Quick Brown fox jumped over the lazy dogs back 0123456789\n\r";
 
@@ -650,72 +651,117 @@ void StartDefaultTask(void *argument)
       break;
     } if (ledseq > 3) ledseq = 0;
 
+    /* Alternate DMA buffer halves. */
     uint8_t idxsum = adcsumidx ^ 1;
+
+    lctr += 1; // Line counter
+
 //#define SUMMEDINTEGER
 #ifdef  SUMMEDINTEGER    
-    uint32_t* psum = &adcsumdb[idxsum][0];
+  uint32_t* psum = &adcsumdb[idxsum][0];
 
-  yprintf(&pbuf1,"\n\r%3u:%6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u %6u",
-    (adcommon.dmact - mctr),
-    *(psum + 0), 
-    *(psum + 1), 
-    *(psum + 2), 
-    *(psum + 3), 
-    *(psum + 4), 
-    *(psum + 5), 
-    *(psum + 6), 
-    *(psum + 7), 
-    *(psum + 8), 
-    *(psum + 9), 
-    *(psum + 10), 
-    *(psum + 11), 
-    *(psum + 12), 
-    *(psum + 13), 
-    *(psum + 14), 
-    *(psum + 15), 
-    *(psum + 16), 
-    *(psum + 17));
+  if (lctr >= 8)
+  {
+    lctr = 0;
+    yprintf(&pbuf1,"\n\rR%3u:",(adcommon.dmact - mctr));
+    for (int i = 0; i < 16; i++)
+    {
+      yprintf(&pbuf1," %6u",(i+1));
+    }
+  }
+
+  yprintf(&pbuf1,"\n\rI   :");
+  for (int i = 0; i < 16; i++)
+  {
+    yprintf(&pbuf1," %6u",*(psum + i) );
+  }
   mctr = adcommon.dmact;
 
 #else
   float* pfsum =  &adcsumfilt[idxsum][0];
+  float fprev = 0;
+  float ftmp = 0;
+  char* er;
+  char* erhi = "HI";
+  char* erlo = "LO";
+  char* erno = "  ";
+  char* erpack;
+  char* erpackhi = "TOTALHI";
+  char* erpackok = "TOTALOK";
+  char* fetstatus;
+  char* fetstatusoff = "FET OFF";
+  char* fetstatuson  = "FET ON";
+  extern uint32_t dwtdiff; 
+  
 
-//#define DIFF_FOR_CELLS
-  if (diff == 0)
-  { 
-    float fprev = 0;
-    yprintf(&pbuf1,"\n\rD%3u:",(adcommon.dmact - mctr) );
-    for (int i = 0; i < 16; i++)
-    {
-      yprintf(&pbuf1,"%7.4f ",*(pfsum + i) - fprev);
-      fprev = *(pfsum + i);
-    }
+  // Status line and column header
+  if (*(pfsum + 15) > adc1.lc.flim_packhi)
+  { // total voltage exceeds limit
+    erpack = erpackhi;
+    fet = 0; // Turn off external charger
   }
   else
+  { // Total voltage not too high
+    erpack = erpackok;
+    fet = 1; // This may be turned off by the cell check
+  }
+   yprintf(&pbuf2,"\n\r\n%5d %s\n\r   ",dwtdiff,erpack);
+ 
+  // Header
+  fprev = 0;
+  for (int i = 0; i < 16; i++)
   {
-    yprintf(&pbuf1,"\n\rN%3u:",(adcommon.dmact - mctr) );
-    for (int i = 0; i < 16; i++)
-    {
-      yprintf(&pbuf1,"%7.4f ",*(pfsum + i));
+    ftmp = *(pfsum + i) - fprev; // Individual cell volts
+    er = erno; // default to no error
+    if (ftmp > adc1.lc.flim_cellhi)
+    { // Cell exceeds limit
+      er = erhi; 
+      fet = 0; // Turn off external charger
     }
+    else if (ftmp < adc1.lc.flim_celllo)
+    { // Cell too low for standard charge current
+      er = erlo;
+      fet = 0; // Turn off external charger
+    }
+    yprintf(&pbuf2,"%5i %s",i+1,er);
+    fprev = *(pfsum + i); 
+  }  
+ 
+   
+  
+  // Individual cells: Differences
+  yprintf(&pbuf1,"\n\rD%3u:",(adcommon.dmact - mctr) );
+  fprev = 0;
+  for (int i = 0; i < 16; i++)
+  {
+    yprintf(&pbuf1,"%7.4f ",*(pfsum + i) - fprev);
+    fprev = *(pfsum + i);
+  }
+
+  // Battery string taps: ground-to-cell voltage
+  yprintf(&pbuf1,"\n\rN%3u:",(adcommon.dmact - mctr) );
+  for (int i = 0; i < 16; i++)
+  {
+    yprintf(&pbuf1,"%7.4f ",*(pfsum + i));
   }
   mctr = adcommon.dmact;
+
+  // FET for external charger update
+   if (fet == 0)
+    fetstatus = fetstatusoff;
+  else
+    fetstatus = fetstatuson;
+
+  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_9,fet); // FET drive
+  yprintf(&pbuf2,"\n\rSTATUS: %s",fetstatus);
+
+   // Vref and Vtemp registers
+  yprintf(&pbuf2," :   Vref %6u Vtemp %u",*pjdr1, *(pjdr1+2));
 #endif
 
 
 
-  // Vref and Vtemp registers
-  yprintf(&pbuf2," : %6u %6u",*pjdr1, *(pjdr1+2));
-
-extern uint32_t dwtdiff; 
-char * adcnum = {"   1       2       3       4       5       6       7       8       9      10      11      12      13      14      15      16  VREFINT    VTEMP"};
-  lctr += 1;
-  if (lctr >= 8)
-  {
-    lctr = 0;
-    yprintf(&pbuf2,"\n\r\n%5d %s",dwtdiff,adcnum);
-    diff ^= 1;
-  }
+ 
  }
   }
   /* USER CODE END 5 */

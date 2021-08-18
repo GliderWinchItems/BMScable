@@ -88,6 +88,10 @@ struct ADCCALHE
 	struct ADC1CALINTERNAL calintern; // Vref and Temp internal sensors
 	struct ADCCALABS cabs[ADCNUMABS];      // Absolute readings
 	struct ADCCALHE  cratio[ADCNUMRATIO];  // Ratometric readings
+		/* Limits for enabling/disabling external charger. */
+	float flim_cellhi; // Individual cell max
+	float flim_celllo; // Individual cell min (special charging required)
+	float flim_packhi; // Total string max
  };
 
 /* **************************************************************************************/

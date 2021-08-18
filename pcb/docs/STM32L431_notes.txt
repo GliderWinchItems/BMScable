@@ -77,6 +77,27 @@ Info : accepting 'telnet' connection on tcp/4444
 
 The telnet window will show a > prompt.
 
+9. Ribbon cable
+
+Ribbon connector--
+
+Oops! No simple way to trim the ribbon where it sticks out from the connector once the ribbon has been connected to the battery, i.e. using scissors to snip off the extra would be tough on the scissors.
+
+Net--crimp the connector to the ribbon first and trim it before connecting to the cells.
+
+The first insertion of the connector is a tight fit. When I tried to pull the connector out of the BMScable pcb I ended up breaking off the "hood" that covers the top of the connector. The legs of that top piece were trapped in the connector so that when I tried to force in a new top piece it didn't seat. You can see that in the pix.
+
+The only solution is to crimp a new connector and carefully, wire-by-wire, cut off the old one (or just leave it dangling).
+
+Net--leave some extra ribbon jic a replacement connector is needed. Ceramic scissors would be another solution.
+
+10. Flashing
+
+Sometimes the flashing of the  'L431 ends with failure with a message about failing to erase. When this happens often it works with the next './mm' try. Sometimes it takes unplugging/repowering. I"m not sure what is going on. Most of the time it works OK when the program has no bugs, but may have to do with a program bug (though the flashing has nothing to do with the program having bugs in execution...). 
+
+
+
+
 
 
 

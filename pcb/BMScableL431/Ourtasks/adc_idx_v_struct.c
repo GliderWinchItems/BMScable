@@ -92,14 +92,12 @@ struct ADC1CALINTERNAL
 	p->calintern.fvtemp    =  1.40f;  // Vtemp voltage at 25 degC
 
 
-/*  Reproduced for convenience 
-struct ADCCALABS
-{
-	struct IIR_L_PARAM iir; // Filter: Time constant, integer scaling
-	uint32_t adcvn;    // (ADC reading) vn 
-    float    fvn;      // (float) measured vn (volts)
-};
-*/
+/* Limits for enabling/disabling external charger. */
+		/* Limits for enabling/disabling external charger. */
+	p->flim_cellhi  = 4.00; // Individual cell max
+	p->flim_celllo  = 3.00; // Individual cell min (special charging required)
+	p->flim_packhi  = 64.0; // Total string max (16*4.00v)
+
 // Battery module cell - (sixteen) ADC0 -ADC15
 #define CELLTC 0.98f // Filter time constant
 #define SKIPCT 3    // Ignore initial readings to filter
@@ -230,23 +228,23 @@ p->cabs[16].scale =		1.709153E-05	;
 p->cabs[17].scale =		0.0078125	;
 #else
 	#ifdef BOARD_NUMBER_1
-p->cabs[0].scale =		1.225140E-04	;
-p->cabs[1].scale =		1.209167E-04	;
-p->cabs[2].scale =		1.198470E-04	;
-p->cabs[3].scale =		1.218922E-04	;
-p->cabs[4].scale =		1.216409E-04	;
-p->cabs[5].scale =		1.214441E-04	;
-p->cabs[6].scale =		1.202031E-04	;
-p->cabs[7].scale =		1.211316E-04	;
-p->cabs[8].scale =		1.209244E-04	;
-p->cabs[9].scale =		1.216035E-04	;
-p->cabs[10].scale =		1.223546E-04	;
-p->cabs[11].scale =		1.218412E-04	;
-p->cabs[12].scale =		1.221481E-04	;
-p->cabs[13].scale =		1.209803E-04	;
-p->cabs[14].scale =		1.220501E-04	;
-p->cabs[15].scale =		1.217526E-04	;
-p->cabs[16].scale =		1.217526E-04	;
+p->cabs[0].scale =		1.225955E-04	;
+p->cabs[1].scale =		1.206775E-04	;
+p->cabs[2].scale =		1.222162E-04	;
+p->cabs[3].scale =		1.217141E-04	;
+p->cabs[4].scale =		1.215153E-04	;
+p->cabs[5].scale =		1.205696E-04	;
+p->cabs[6].scale =		1.195064E-04	;
+p->cabs[7].scale =		1.206030E-04	;
+p->cabs[8].scale =		1.204576E-04	;
+p->cabs[9].scale =		1.209092E-04	;
+p->cabs[10].scale =		1.218337E-04	;
+p->cabs[11].scale =		1.213626E-04	;
+p->cabs[12].scale =		1.217193E-04	;
+p->cabs[13].scale =		1.205854E-04	;
+p->cabs[14].scale =		1.216786E-04	;
+p->cabs[15].scale =		1.212154E-04	;
+p->cabs[16].scale =		1.212154E-04	;
 p->cabs[17].scale =		0.0078125	;
 
 
