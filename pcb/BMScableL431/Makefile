@@ -101,6 +101,7 @@ C_SOURCES += Ourtasks/adc_idx_v_struct.c
 C_SOURCES += Ourtasks/iir_f1.c
 #C_SOURCES += Ourtasks/iir_filter_lx.c
 C_SOURCES += Ourtasks/stackwatermark.c
+C_SOURCES += Ourtasks/ribboncolors.c
 
 # /* USER CODE END */ 
 

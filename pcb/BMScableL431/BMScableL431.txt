@@ -1,6 +1,6 @@
 Configuration	BMScableL431
 STM32CubeMX 	6.3.0
-Date	08/16/2021
+Date	08/17/2021
 MCU	STM32L431RBTx
 
 

@@ -62,21 +62,6 @@ struct ADCCALABS
 	float  offset;  // X^0
 };
 
-/* 5v supply ratiometric calibration, e.g. Hall effect sensors. */
-/*
-The calibrate current might be amp-turns if multiple turns are used
-for calibration using low currents.
-*/
-struct ADCCALHE
-{
-	struct IIR_L_PARAM iir; // Filter: Time constant, integer scaling
-	float    scale;     // 
-	uint32_t zeroadcve; // connected, no current: HE adc reading
-	uint32_t zeroadc5;  // connected, no current: 5v adc reading 
-	uint32_t caladcve;  // connected, calibrate current: adc reading
-	float    fcalcur;   // connected, calibrate current: current
-};
-
 /* Parameters for ADC. */
 // LC = Local (sram) Copy of parameters
  struct ADCGEVCULC
@@ -87,11 +72,12 @@ struct ADCCALHE
 	uint32_t hbct;       // heartbeat count (ms)
 	struct ADC1CALINTERNAL calintern; // Vref and Temp internal sensors
 	struct ADCCALABS cabs[ADCNUMABS];      // Absolute readings
-	struct ADCCALHE  cratio[ADCNUMRATIO];  // Ratometric readings
 		/* Limits for enabling/disabling external charger. */
 	float flim_cellhi; // Individual cell max
 	float flim_celllo; // Individual cell min (special charging required)
 	float flim_packhi; // Total string max
+	float flim_relaylo; // Relay switched wire: less than is OK
+	float flim_relayhi; // Relay switched wire: greater than is some other cell
  };
 
 /* **************************************************************************************/
@@ -100,6 +86,6 @@ int adc_idx_v_struct_hardcode_params(struct ADCGEVCULC* p);
  * @return	: 0
  * ************************************************************************************** */
 
-extern uint8_t adc_map[16];
+
 #endif
 

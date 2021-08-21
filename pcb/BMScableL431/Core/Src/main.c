@@ -605,14 +605,20 @@ uint16_t* pjdr2 = (uint16_t*)(0x50040000 + 0x80 + 0x04); // Vtemp
 uint8_t diff = 0; // yprintf switch lines
 uint8_t fet = 0;
 
+char* ribboncolor = "GRY     BLU     PUR     GRN     BLU     YEL     GRN     ORG     YEL     RED     ORG     BRN     RED     BLK     BRN     WHT";
+char* pinnumber   = "13       5      14       6      15       7      16       8      17       9      18      10      19      11      20      12 ";
+
 char* test = "Quick Brown fox jumped over the lazy dogs back 0123456789\n\r";
 
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-  uint32_t noteval = 0;
-  uint8_t ledseq = 0;
+  uint32_t noteval = 0; // TaskNotifyWait notification word
+  uint32_t notectr = 0; // Running count of notifications
+  uint32_t notelim = 0; // Wait for notectr
+  uint8_t state    = 0; // State machine sequence
+//  uint8_t ledseq   = 0;
 
   struct SERIALSENDTASKBCB* pbuf1 = getserialbuf(&HUARTMON,256);
   if (pbuf1 == NULL) morse_trap(115);
@@ -621,145 +627,198 @@ void StartDefaultTask(void *argument)
 
   yprintf(&pbuf1,"\n\rBegin %d",mctr++);
 
+    HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_3); // GRN LED
   /* Infinite loop */
   for(;;)
   {
 
-        /* Wait for ADC new adc data (ADCTask.c) */
+    /* Wait for ADC new adc data (ADCTask.c) */
     xTaskNotifyWait(0,0xffffffff, &noteval, portMAX_DELAY);
 
    if (noteval & DEFAULTTASKBIT00)
    {
-      ratectr += 1;
-      if (ratectr < 10) continue;
-    
+    notectr += 1;  // Running count of notifications
+
+
+
+    /* Make monitor update rate reasonable. */
+    ratectr += 1;
+    if (ratectr < 4) continue;
     ratectr = 0;
-        
-    switch (ledseq++)
+
+    HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_3); // GRN LED
+
+    /* Index for just completed DMA buffer half. */
+    uint8_t idxsum = adcsumidx ^ 1;
+    float*   pfsum = &adcsumfilt[idxsum][0];
+// STATES ------------------------------------------------------
+#define RELAYDELAY 16
+    switch (state)
     {
     case 0:
-     HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_SET); // RED LED OFF
-      break;
-    case 1:
-      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_RESET); // RED LED ON
-      break; 
-    case 2:
-      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_3,GPIO_PIN_SET); // GRN LED OFF
-      break;
-    case 3:
-      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_3,GPIO_PIN_RESET); // GRN LED ON
-      break;
-    } if (ledseq > 3) ledseq = 0;
-
-    /* Alternate DMA buffer halves. */
-    uint8_t idxsum = adcsumidx ^ 1;
-
-    lctr += 1; // Line counter
-
+      lctr += 1; // Line counter for header
+//HAL_GPIO_WritePin(GPIOB,GPIO_PIN_2 | GPIO_PIN_10,GPIO_PIN_RESET);
 //#define SUMMEDINTEGER
-#ifdef  SUMMEDINTEGER    
-  uint32_t* psum = &adcsumdb[idxsum][0];
+#ifdef  SUMMEDINTEGER   
+     uint32_t* psum = &adcsumdb[idxsum][0];
+      if (lctr >= 8)
+      {
+        lctr = 0;
+        yprintf(&pbuf1,"\n\rR%4u:",(adcommon.dmact - mctr));
+        for (int i = 0; i < 16; i++)
+        {
+          yprintf(&pbuf1," %6u",(i+1));
+        }
+      }
 
-  if (lctr >= 8)
-  {
-    lctr = 0;
-    yprintf(&pbuf1,"\n\rR%3u:",(adcommon.dmact - mctr));
-    for (int i = 0; i < 16; i++)
-    {
-      yprintf(&pbuf1," %6u",(i+1));
-    }
-  }
-
-  yprintf(&pbuf1,"\n\rI   :");
-  for (int i = 0; i < 16; i++)
-  {
-    yprintf(&pbuf1," %6u",*(psum + i) );
-  }
-  mctr = adcommon.dmact;
-
+      yprintf(&pbuf1,"\n\rI   :");
+      for (int i = 0; i < 16; i++)
+      {
+        yprintf(&pbuf1," %6u",*(psum + i) );
+      }
+      mctr = adcommon.dmact;
 #else
-  float* pfsum =  &adcsumfilt[idxsum][0];
-  float fprev = 0;
-  float ftmp = 0;
-  char* er;
-  char* erhi = "HI";
-  char* erlo = "LO";
-  char* erno = "  ";
-  char* erpack;
-  char* erpackhi = "TOTALHI";
-  char* erpackok = "TOTALOK";
-  char* fetstatus;
-  char* fetstatusoff = "FET OFF";
-  char* fetstatuson  = "FET ON";
-  extern uint32_t dwtdiff; 
-  
+// Calibrated       
 
-  // Status line and column header
-  if (*(pfsum + 15) > adc1.lc.flim_packhi)
-  { // total voltage exceeds limit
-    erpack = erpackhi;
-    fet = 0; // Turn off external charger
-  }
-  else
-  { // Total voltage not too high
-    erpack = erpackok;
-    fet = 1; // This may be turned off by the cell check
-  }
-   yprintf(&pbuf2,"\n\r\n%5d %s\n\r   ",dwtdiff,erpack);
+      float fprev = 0;
+      float ftmp = 0;
+      char* er;
+      char* erhi = "HI";
+      char* erlo = "LO";
+      char* erno = "  ";
+      char* erpack;
+      char* erpackhi = "TOTALHI";
+      char* erpackok = "TOTALOK";
+      char* fetstatus;
+      char* fetstatusoff = "FET OFF";
+      char* fetstatuson  = "FET ON";
+
+      uint8_t remap[3] = {3,1,7};
+      char* rename[3] = {"SRN","SRP","C0 "};
+
  
-  // Header
-  fprev = 0;
-  for (int i = 0; i < 16; i++)
-  {
-    ftmp = *(pfsum + i) - fprev; // Individual cell volts
-    er = erno; // default to no error
-    if (ftmp > adc1.lc.flim_cellhi)
-    { // Cell exceeds limit
-      er = erhi; 
-      fet = 0; // Turn off external charger
-    }
-    else if (ftmp < adc1.lc.flim_celllo)
-    { // Cell too low for standard charge current
-      er = erlo;
-      fet = 0; // Turn off external charger
-    }
-    yprintf(&pbuf2,"%5i %s",i+1,er);
-    fprev = *(pfsum + i); 
-  }  
- 
-   
+
+      extern uint32_t dwtdiff; 
   
-  // Individual cells: Differences
-  yprintf(&pbuf1,"\n\rD%3u:",(adcommon.dmact - mctr) );
-  fprev = 0;
-  for (int i = 0; i < 16; i++)
-  {
-    yprintf(&pbuf1,"%7.4f ",*(pfsum + i) - fprev);
-    fprev = *(pfsum + i);
-  }
+      // Status line and column header
+      if (*(pfsum + 15) > adc1.lc.flim_packhi)
+      { // total voltage exceeds limit
+        erpack = erpackhi;
+        fet = 0; // Turn off external charger
+      }
+      else
+      { // Total voltage not too high
+        erpack = erpackok;
+        fet = 1; // This may be turned off by the cell check
+      }
+      yprintf(&pbuf2,"\n\r\n%5d %s\n\r   ",dwtdiff,erpack);
+ 
+      // Header
+      yprintf(&pbuf2,"\n\rPIN#  %s",pinnumber);
+      yprintf(&pbuf1,"\n\rCOLOR%s\n\rCELL",ribboncolor);
 
-  // Battery string taps: ground-to-cell voltage
-  yprintf(&pbuf1,"\n\rN%3u:",(adcommon.dmact - mctr) );
-  for (int i = 0; i < 16; i++)
-  {
-    yprintf(&pbuf1,"%7.4f ",*(pfsum + i));
-  }
-  mctr = adcommon.dmact;
+      fprev = 0;
+      for (int i = 0; i < 16; i++)
+      {
+        ftmp = *(pfsum + i) - fprev; // Individual cell volts
+        er = erno; // default to no error
+        if (ftmp > adc1.lc.flim_cellhi)
+        { // Cell exceeds limit
+          er = erhi; 
+          fet = 0; // Turn off external charger
+        }
+        else if (ftmp < adc1.lc.flim_celllo)
+        { // Cell too low for standard charge current
+          er = erlo;
+          fet = 0; // Turn off external charger
+        }
+        if (i == 0)
+          yprintf(&pbuf2,"%3i %s",i+1,er);
+        else
+          yprintf(&pbuf2,"%5i %s",i+1,er);
+        fprev = *(pfsum + i); 
+      }  
+  
+      // Individual cells: Differences
+      yprintf(&pbuf1,"\n\rD:");
+      fprev = 0;
+      for (int i = 0; i < 16; i++)
+      {
+        yprintf(&pbuf1,"%7.4f ",*(pfsum + i) - fprev);
+        fprev = *(pfsum + i);
+      }
 
-  // FET for external charger update
-   if (fet == 0)
-    fetstatus = fetstatusoff;
-  else
-    fetstatus = fetstatuson;
+      // Battery string taps: ground-to-cell voltage
+      yprintf(&pbuf1,"\n\rN:");
+      for (int i = 0; i < 16; i++)
+      {
+        yprintf(&pbuf1,"%7.4f ",*(pfsum + i));
+      }
+      mctr = adcommon.dmact;
 
-  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_9,fet); // FET drive
-  yprintf(&pbuf2,"\n\rSTATUS: %s",fetstatus);
+      // FET for external charger update
+      if (fet == 0)
+        fetstatus = fetstatusoff;
+      else
+        fetstatus = fetstatuson;
 
-   // Vref and Vtemp registers
-  yprintf(&pbuf2," :   Vref %6u Vtemp %u",*pjdr1, *(pjdr1+2));
+      // RED led on when external charger fet ON
+      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_9,fet); // FET drive
+      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,(fet ^ 1)); // RED led
+
+      yprintf(&pbuf2,"\n\rSTATUS: %s",fetstatus);
+
+      // Vref and Vtemp registers
+      yprintf(&pbuf1," :   Vref %6u Vtemp %u",*pjdr1, *(pjdr1+2));
 #endif
+      notelim = notectr + RELAYDELAY;
 
+// #define CHECKRELAYEDWIRES
+  #ifndef CHECKRELAYEDWIRES
+      state = 2; // Do the delay, then continue w/o relay wire check
+      break;
+  #else
+      state = 1; 
+      // Turn fets and relays ON to switch ADC inputs
+      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_2 | GPIO_PIN_10,GPIO_PIN_SET);
+     /* No break: FALL THRU */
+  #endif     
 
+    case 1: // Wait out delay for readings to stabilize
+      if ((int)(notectr - notelim) < 0) break;
+
+      // Here, sufficient delay to use readings
+      yprintf(&pbuf1,"\n\rZ:");
+
+      state = 2;
+
+      for (int i= 0; i < 3; i++)
+      {
+        if (*(pfsum + remap[i]) > adc1.lc.flim_relayhi) // Relay switched wire: greater than = Open
+        { // Here, wire must be connected to some CELL and not ground
+          yprintf(&pbuf2," %s %s %0.3f",rename[i],"WRONG",*(pfsum + remap[i]));
+          continue;
+        }
+        if (*(pfsum + remap[i]) < adc1.lc.flim_relaylo) // Relay switched wire: less than = OK
+        { // Here, wire shows small or no voltage, hence continuity.
+          yprintf(&pbuf2," %s %s %0.3f",rename[i],"GOOD",*(pfsum + remap[i]));
+          continue;
+        } // Here, input pin not connected to anything
+        yprintf(&pbuf2," %s %s %0.3f",rename[i],"OPEN",*(pfsum + remap[i]));
+      }
+//      yprintf(&pbuf2,"\n\r   SRN %0.4f SRP %0.4f C0 %0.4f",*(pfsum + 3),*(pfsum + 1),*(pfsum + 7));
+
+      // Turn fets and relays OFF to switch ADC inputs
+      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_2 | GPIO_PIN_10,GPIO_PIN_RESET);
+      notelim = notectr + RELAYDELAY;
+      state = 2;
+
+    case 2:
+      if ((int)(notectr - notelim) < 0) break;
+      state = 0;
+      break;    
+
+  }
 
  
  }

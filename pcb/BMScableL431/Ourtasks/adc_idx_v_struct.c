@@ -14,25 +14,7 @@ The time constant is the reciprocal of the radian bandwidth so about 6 ms. The 1
 Since those outputs are at a 64 Hz rate (15.6 ms period), that seems like a pretty reasonable value for K.
 
 */
-/* Indices to map to cell numbering 0 -15 */
-uint8_t adc_map[16] = {
-12,
-14,
-8,
-10,
-4,
-6,
-0,
-2,
-13,
-15,
-9,
-11,
-5,
-7,
-3,
-1
-};
+
 
 /* **************************************************************************************
  * int adc_idx_v_struct_hardcode_params(struct ADCGEVCULC* p);
@@ -94,12 +76,14 @@ struct ADC1CALINTERNAL
 
 /* Limits for enabling/disabling external charger. */
 		/* Limits for enabling/disabling external charger. */
-	p->flim_cellhi  = 4.00; // Individual cell max
-	p->flim_celllo  = 3.00; // Individual cell min (special charging required)
-	p->flim_packhi  = 64.0; // Total string max (16*4.00v)
+	p->flim_cellhi  = 4.00f; // Individual cell max
+	p->flim_celllo  = 3.00f; // Individual cell min (special charging required)
+	p->flim_packhi  = 64.0f; // Total string max (16*4.00v)
+	p->flim_relaylo = 0.50f; // Relay switched wire: less than = OK
+	p->flim_relayhi = 2.80f; // Relay switched wire: greater than = some other adc
 
 // Battery module cell - (sixteen) ADC0 -ADC15
-#define CELLTC 0.98f // Filter time constant
+#define CELLTC 0.80f // Filter time constant
 #define SKIPCT 3    // Ignore initial readings to filter
 #define DEFAULTSCALE 1.253600E-04f // Base on nominal values
 	
@@ -205,39 +189,41 @@ struct ADC1CALINTERNAL
    is an escaped character \342 and requiresreplacement 
    with '->'
 */
-#define BOARD_NUMBER_1
+#define BOARD_NUMBER_2
 /* Calibration: Copy & paste from spreadsheet */
 #ifdef BOARD_NUMBER_2
-p->cabs[0].scale =		1.227286E-04	;
-p->cabs[1].scale =		1.236577E-04	;
-p->cabs[2].scale =		1.234556E-04	;
-p->cabs[3].scale =		1.235455E-04	;
-p->cabs[4].scale =		1.236471E-04	;
-p->cabs[5].scale =		1.225917E-04	;
-p->cabs[6].scale =		1.225803E-04	;
-p->cabs[7].scale =		1.237470E-04	;
-p->cabs[8].scale =		1.226385E-04	;
-p->cabs[9].scale =		1.236088E-04	;
-p->cabs[10].scale =		1.231935E-04	;
-p->cabs[11].scale =		1.214884E-04	;
-p->cabs[12].scale =		1.239065E-04	;
-p->cabs[13].scale =		1.216815E-04	;
-p->cabs[14].scale =		1.220047E-04	;
-p->cabs[15].scale =		1.225867E-04	;
+p->cabs[ 0].scale =		1.224631E-04	;
+p->cabs[ 1].scale =		1.217003E-04	;
+p->cabs[ 2].scale =		1.230490E-04	;
+p->cabs[ 3].scale =		1.212677E-04	;
+p->cabs[ 4].scale =		1.220354E-04	;
+p->cabs[ 5].scale =		1.228774E-04	;
+p->cabs[ 6].scale =		1.215678E-04	;
+p->cabs[ 7].scale =		1.205623E-04	;
+p->cabs[ 8].scale =		1.214295E-04	;
+p->cabs[ 9].scale =		1.218877E-04	;
+p->cabs[10].scale =		1.215793E-04	;
+p->cabs[11].scale =		1.203913E-04	;
+p->cabs[12].scale =		1.207570E-04	;
+p->cabs[13].scale =		1.213717E-04	;
+p->cabs[14].scale =		1.214478E-04	;
+p->cabs[15].scale =		1.222229E-04	;
 p->cabs[16].scale =		1.709153E-05	;
 p->cabs[17].scale =		0.0078125	;
+
+
 #else
 	#ifdef BOARD_NUMBER_1
-p->cabs[0].scale =		1.225955E-04	;
-p->cabs[1].scale =		1.206775E-04	;
-p->cabs[2].scale =		1.222162E-04	;
-p->cabs[3].scale =		1.217141E-04	;
-p->cabs[4].scale =		1.215153E-04	;
-p->cabs[5].scale =		1.205696E-04	;
-p->cabs[6].scale =		1.195064E-04	;
-p->cabs[7].scale =		1.206030E-04	;
-p->cabs[8].scale =		1.204576E-04	;
-p->cabs[9].scale =		1.209092E-04	;
+p->cabs[ 0].scale =		1.225955E-04	;
+p->cabs[ 1].scale =		1.206775E-04	;
+p->cabs[ 2].scale =		1.222162E-04	;
+p->cabs[ 3].scale =		1.217141E-04	;
+p->cabs[ 4].scale =		1.215153E-04	;
+p->cabs[ 5].scale =		1.205696E-04	;
+p->cabs[ 6].scale =		1.195064E-04	;
+p->cabs[ 7].scale =		1.206030E-04	;
+p->cabs[ 8].scale =		1.204576E-04	;
+p->cabs[ 9].scale =		1.209092E-04	;
 p->cabs[10].scale =		1.218337E-04	;
 p->cabs[11].scale =		1.213626E-04	;
 p->cabs[12].scale =		1.217193E-04	;

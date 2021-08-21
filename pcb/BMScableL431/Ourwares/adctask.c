@@ -144,7 +144,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
  * *************************************************************************/
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	adcommon.dmact2 += 1; // Running count
+	adcommon.dmact += 1; // Running count
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	struct ADCDMATSKBLK* ptmp = &adc1dmatskblk[0];
 
