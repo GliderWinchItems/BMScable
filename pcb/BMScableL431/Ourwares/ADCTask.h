@@ -1,6 +1,7 @@
 /******************************************************************************
 * File Name          : ADCTask.h
-* Date First Issued  : 02/01/2019
+* Date First Issued  : 08/22/2021
+* Board              : BMScable: STM32L431
 * Description        : ADC w DMA using FreeRTOS/ST HAL
 *******************************************************************************/
 

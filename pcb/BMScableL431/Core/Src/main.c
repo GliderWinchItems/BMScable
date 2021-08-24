@@ -773,7 +773,7 @@ void StartDefaultTask(void *argument)
 #endif
       notelim = notectr + RELAYDELAY;
 
-// #define CHECKRELAYEDWIRES
+ #define CHECKRELAYEDWIRES
   #ifndef CHECKRELAYEDWIRES
       state = 2; // Do the delay, then continue w/o relay wire check
       break;

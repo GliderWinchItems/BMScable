@@ -95,6 +95,12 @@ Net--leave some extra ribbon jic a replacement connector is needed. Ceramic scis
 
 Sometimes the flashing of the  'L431 ends with failure with a message about failing to erase. When this happens often it works with the next './mm' try. Sometimes it takes unplugging/repowering. I"m not sure what is going on. Most of the time it works OK when the program has no bugs, but may have to do with a program bug (though the flashing has nothing to do with the program having bugs in execution...). 
 
+11. Idea--extra IDC connector for calibration
+
+Extra IDC connector on the ribbon would allow connecting another ribbon to a board that sequences connections for the calibration meter.
+
+
+
 
 
 

@@ -85,13 +85,16 @@ module post(a)
 }
 module total()
 {
-xx = 0.5; // Hole centering adjustment    
+xx = -0.5; // Hole centering adjustment    
     base();
     
+    translate([.7,0,0])
+    {
     post([-ll/2+crnr,-ww/2+crnr,0]);
     post([+brdlen/2-crnr+xx,-ww/2+crnr,0]);
     post([-ll/2+crnr,+ww/2-crnr-baserim,0]);
     post([+brdlen/2-crnr+xx,+ww/2-crnr-baserim,0]);
+    }
 }
 
 total();

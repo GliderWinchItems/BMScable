@@ -1,7 +1,7 @@
 /******************************************************************************
 * File Name          : adc_idx_v_struct.c
-* Date First Issued  : 10/09/2019
-* Board              :
+* Date First Issued  : 08/22/2021
+* Board              : BMScable: STM32L431
 * Description        : Load sram local copy of parameters
 *******************************************************************************/
 /* 10/23/2020: Revised for Levelwind */
@@ -189,7 +189,7 @@ struct ADC1CALINTERNAL
    is an escaped character \342 and requiresreplacement 
    with '->'
 */
-#define BOARD_NUMBER_2
+#define BOARD_NUMBER_1
 /* Calibration: Copy & paste from spreadsheet */
 #ifdef BOARD_NUMBER_2
 p->cabs[ 0].scale =		1.224631E-04	;
@@ -232,7 +232,6 @@ p->cabs[14].scale =		1.216786E-04	;
 p->cabs[15].scale =		1.212154E-04	;
 p->cabs[16].scale =		1.212154E-04	;
 p->cabs[17].scale =		0.0078125	;
-
 
 	#else
 //	#error BOARD_1 or BOARD_2 (calibration selection) not specified

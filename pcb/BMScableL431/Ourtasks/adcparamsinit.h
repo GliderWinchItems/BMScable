@@ -1,7 +1,7 @@
 /******************************************************************************
 * File Name          : adcparamsinit.h
-* Date First Issued  : 10/09/2019
-* Board              : DiscoveryF4
+* Date First Issued  : 08/22/2021
+* Board              : BMScable: STM32L431
 * Description        : Initialization of parameters for ADC app configuration
 *******************************************************************************/
 

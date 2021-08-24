@@ -1,5 +1,6 @@
 /******************************************************************************
 * File Name          : adctask.c
+* Board              : BMScable: STM32L431
 * Date First Issued  : 02/01/2019
 * Description        : Handle ADC w DMA using FreeRTOS/ST HAL within a task
 *******************************************************************************/

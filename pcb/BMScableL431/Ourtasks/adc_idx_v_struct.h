@@ -1,7 +1,7 @@
 /******************************************************************************
 * File Name          : adc_idx_v_struct.h
-* Date First Issued  : 10/09/2019
-* Board              :
+* Date First Issued  : 08/22/2021
+* Board              : BMScable: STM32L431
 * Description        : Translate parameter index into pointer into struct
 *******************************************************************************/
 /*

@@ -1,5 +1,6 @@
 /******************************************************************************
 * File Name          : ADCTask.c
+* Board              : BMScable: STM32L431
 * Date First Issued  : 02/01/2019
 * Description        : Processing ADC readings after ADC/DMA issues interrupt
 *******************************************************************************/
