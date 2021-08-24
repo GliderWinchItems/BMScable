@@ -234,7 +234,7 @@ p->cabs[16].scale =		1.212154E-04	;
 p->cabs[17].scale =		0.0078125	;
 
 	#else
-//	#error BOARD_1 or BOARD_2 (calibration selection) not specified
+	#error BOARD_1 or BOARD_2 (calibration selection) not specified
 	#endif
 #endif	
 
