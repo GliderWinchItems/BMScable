@@ -76,9 +76,9 @@ struct ADC1CALINTERNAL
 
 /* Limits for enabling/disabling external charger. */
 		/* Limits for enabling/disabling external charger. */
-	p->flim_cellhi  = 4.00f; // Individual cell max
-	p->flim_celllo  = 3.00f; // Individual cell min (special charging required)
-	p->flim_packhi  = 64.0f; // Total string max (16*4.00v)
+	p->flim_cellhi  = 3.55f; // Individual cell max
+	p->flim_celllo  = 2.30f; // Individual cell min (special charging required)
+	p->flim_packhi  = 56.8f; // Total string max (16*3.55v)
 	p->flim_relaylo = 0.50f; // Relay switched wire: less than = OK
 	p->flim_relayhi = 2.80f; // Relay switched wire: greater than = some other adc
 
@@ -189,49 +189,51 @@ struct ADC1CALINTERNAL
    is an escaped character \342 and requiresreplacement 
    with '->'
 */
-#define BOARD_NUMBER_1
+#define BOARD_NUMBER_2
 /* Calibration: Copy & paste from spreadsheet */
 #ifdef BOARD_NUMBER_2
-p->cabs[ 0].scale =		1.224631E-04	;
-p->cabs[ 1].scale =		1.217003E-04	;
-p->cabs[ 2].scale =		1.230490E-04	;
-p->cabs[ 3].scale =		1.212677E-04	;
-p->cabs[ 4].scale =		1.220354E-04	;
-p->cabs[ 5].scale =		1.228774E-04	;
-p->cabs[ 6].scale =		1.215678E-04	;
-p->cabs[ 7].scale =		1.205623E-04	;
-p->cabs[ 8].scale =		1.214295E-04	;
-p->cabs[ 9].scale =		1.218877E-04	;
-p->cabs[10].scale =		1.215793E-04	;
-p->cabs[11].scale =		1.203913E-04	;
-p->cabs[12].scale =		1.207570E-04	;
-p->cabs[13].scale =		1.213717E-04	;
-p->cabs[14].scale =		1.214478E-04	;
-p->cabs[15].scale =		1.222229E-04	;
+p->cabs[ 0].scale =		1.236120E-04	;
+p->cabs[ 1].scale =		1.211896E-04	;
+p->cabs[ 2].scale =		1.217631E-04	;
+p->cabs[ 3].scale =		1.215495E-04	;
+p->cabs[ 4].scale =		1.215893E-04	;
+p->cabs[ 5].scale =		1.206427E-04	;
+p->cabs[ 6].scale =		1.216620E-04	;
+p->cabs[ 7].scale =		1.226831E-04	;
+p->cabs[ 8].scale =		1.215362E-04	;
+p->cabs[ 9].scale =		1.201768E-04	;
+p->cabs[10].scale =		1.212922E-04	;
+p->cabs[11].scale =		1.218116E-04	;
+p->cabs[12].scale =		1.215921E-04	;
+p->cabs[13].scale =		1.221255E-04	;
+p->cabs[14].scale =		1.205759E-04	;
+p->cabs[15].scale =		1.211369E-04	;
 p->cabs[16].scale =		1.709153E-05	;
 p->cabs[17].scale =		0.0078125	;
 
 
+
 #else
 	#ifdef BOARD_NUMBER_1
-p->cabs[ 0].scale =		1.225955E-04	;
-p->cabs[ 1].scale =		1.206775E-04	;
-p->cabs[ 2].scale =		1.222162E-04	;
-p->cabs[ 3].scale =		1.217141E-04	;
-p->cabs[ 4].scale =		1.215153E-04	;
-p->cabs[ 5].scale =		1.205696E-04	;
-p->cabs[ 6].scale =		1.195064E-04	;
-p->cabs[ 7].scale =		1.206030E-04	;
-p->cabs[ 8].scale =		1.204576E-04	;
-p->cabs[ 9].scale =		1.209092E-04	;
-p->cabs[10].scale =		1.218337E-04	;
-p->cabs[11].scale =		1.213626E-04	;
-p->cabs[12].scale =		1.217193E-04	;
-p->cabs[13].scale =		1.205854E-04	;
-p->cabs[14].scale =		1.216786E-04	;
-p->cabs[15].scale =		1.212154E-04	;
-p->cabs[16].scale =		1.212154E-04	;
+p->cabs[ 0].scale =		1.227463E-04	;
+p->cabs[ 1].scale =		1.218370E-04	;
+p->cabs[ 2].scale =		1.217893E-04	;
+p->cabs[ 3].scale =		1.209000E-04	;
+p->cabs[ 4].scale =		1.202600E-04	;
+p->cabs[ 5].scale =		1.211744E-04	;
+p->cabs[ 6].scale =		1.213293E-04	;
+p->cabs[ 7].scale =		1.212722E-04	;
+p->cabs[ 8].scale =		1.223139E-04	;
+p->cabs[ 9].scale =		1.217158E-04	;
+p->cabs[10].scale =		1.207439E-04	;
+p->cabs[11].scale =		1.214528E-04	;
+p->cabs[12].scale =		1.219797E-04	;
+p->cabs[13].scale =		1.215575E-04	;
+p->cabs[14].scale =		1.219767E-04	;
+p->cabs[15].scale =		1.207445E-04	;
+p->cabs[16].scale =		1.709153E-05	;
 p->cabs[17].scale =		0.0078125	;
+
 
 	#else
 	#error BOARD_1 or BOARD_2 (calibration selection) not specified

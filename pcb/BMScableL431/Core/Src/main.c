@@ -299,7 +299,7 @@ static void MX_ADC1_Init(void)
   HAL_ADCEx_DisableInjectedQueue(&hadc1);
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_7;
+  sConfig.Channel = ADC_CHANNEL_8;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLETIME_247CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
@@ -311,7 +311,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_16;
+  sConfig.Channel = ADC_CHANNEL_15;
   sConfig.Rank = ADC_REGULAR_RANK_2;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -319,7 +319,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Channel = ADC_CHANNEL_7;
   sConfig.Rank = ADC_REGULAR_RANK_3;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -327,7 +327,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_15;
+  sConfig.Channel = ADC_CHANNEL_16;
   sConfig.Rank = ADC_REGULAR_RANK_4;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -335,7 +335,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_5;
+  sConfig.Channel = ADC_CHANNEL_6;
   sConfig.Rank = ADC_REGULAR_RANK_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -343,7 +343,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_13;
+  sConfig.Channel = ADC_CHANNEL_14;
   sConfig.Rank = ADC_REGULAR_RANK_6;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -351,7 +351,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Channel = ADC_CHANNEL_5;
   sConfig.Rank = ADC_REGULAR_RANK_7;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -359,7 +359,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_14;
+  sConfig.Channel = ADC_CHANNEL_13;
   sConfig.Rank = ADC_REGULAR_RANK_8;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -367,7 +367,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_3;
+  sConfig.Channel = ADC_CHANNEL_4;
   sConfig.Rank = ADC_REGULAR_RANK_9;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -375,7 +375,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_11;
+  sConfig.Channel = ADC_CHANNEL_12;
   sConfig.Rank = ADC_REGULAR_RANK_10;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -383,7 +383,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_4;
+  sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = ADC_REGULAR_RANK_11;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -391,7 +391,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_12;
+  sConfig.Channel = ADC_CHANNEL_11;
   sConfig.Rank = ADC_REGULAR_RANK_12;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -399,7 +399,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Channel = ADC_CHANNEL_2;
   sConfig.Rank = ADC_REGULAR_RANK_13;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -407,7 +407,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_9;
+  sConfig.Channel = ADC_CHANNEL_10;
   sConfig.Rank = ADC_REGULAR_RANK_14;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -415,7 +415,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_2;
+  sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_15;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -423,7 +423,7 @@ static void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_10;
+  sConfig.Channel = ADC_CHANNEL_9;
   sConfig.Rank = ADC_REGULAR_RANK_16;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -605,8 +605,19 @@ uint16_t* pjdr2 = (uint16_t*)(0x50040000 + 0x80 + 0x04); // Vtemp
 uint8_t diff = 0; // yprintf switch lines
 uint8_t fet = 0;
 
+/* Ribbon assignments of battery cable for use with BMSCable adaptor 
+ribboncolorR = ribbon color sequence reversed from standard cables
+ribboncolorS = ribbon color sequence standard 
+pinnumberB   = IDC connector pin for battery cable (02/2022) */
+char* ribboncolorR= "WHT     GRY     GRY     PUR     PUR     BLU     BLU     GRN     GRN     YEL     YEL     ORG     ORG     RED     RED     BRN    BRN    BLK";
+char* ribboncolorS= "RED     ORG     ORG     YEL     YEL     GRN     GRN     BLU     BLU     PUR     PUR     GRY     GRY     WHT     WHT     BLK    BLK    BRN";
+char* pinnumberB  = "12       3      13       4      14       5      15       6      16       7      17       8      18       9      19      10      20     11";
+char* cellnumberB = " 1       2       3       4       5       6       7       8       9      10      11      12      13      14      15      16      17     18";
+
+/* BQ ribbon assignment. */
 char* ribboncolor = "GRY     BLU     PUR     GRN     BLU     YEL     GRN     ORG     YEL     RED     ORG     BRN     RED     BLK     BRN     WHT";
 char* pinnumber   = "13       5      14       6      15       7      16       8      17       9      18      10      19      11      20      12 ";
+char* cellnumber  = " 1       2       3       4       5       6       7       8       9      10      11      12      13      14      15      16 ";
 
 char* test = "Quick Brown fox jumped over the lazy dogs back 0123456789\n\r";
 
@@ -643,7 +654,7 @@ void StartDefaultTask(void *argument)
 
     /* Make monitor update rate reasonable. */
     ratectr += 1;
-    if (ratectr < 4) continue;
+    if (ratectr < 2) continue;
     ratectr = 0;
 
     HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_3); // GRN LED
@@ -652,7 +663,7 @@ void StartDefaultTask(void *argument)
     uint8_t idxsum = adcsumidx ^ 1;
     float*   pfsum = &adcsumfilt[idxsum][0];
 // STATES ------------------------------------------------------
-#define RELAYDELAY 16
+#define RELAYDELAY 4
     switch (state)
     {
     case 0:
@@ -693,11 +704,6 @@ void StartDefaultTask(void *argument)
       char* fetstatusoff = "FET OFF";
       char* fetstatuson  = "FET ON";
 
-      uint8_t remap[3] = {3,1,7};
-      char* rename[3] = {"SRN","SRP","C0 "};
-
- 
-
       extern uint32_t dwtdiff; 
   
       // Status line and column header
@@ -713,9 +719,16 @@ void StartDefaultTask(void *argument)
       }
       yprintf(&pbuf2,"\n\r\n%5d %s\n\r   ",dwtdiff,erpack);
  
-      // Header
+      /* Header depends on adaptor, and battery box. */
+    #define SIXTEENBOX
+    #ifdef  SIXTEENBOX
+      yprintf(&pbuf2,"\n\rPIN#   %s",pinnumberB);
+      yprintf(&pbuf1,"\n\rREVRSE %s\n\r",ribboncolorR);
+      yprintf(&pbuf1,"STNDRD %s\n\rCELL# ",ribboncolorS);
+    #else
       yprintf(&pbuf2,"\n\rPIN#  %s",pinnumber);
       yprintf(&pbuf1,"\n\rCOLOR%s\n\rCELL",ribboncolor);
+    #endif
 
       fprev = 0;
       for (int i = 0; i < 16; i++)
@@ -740,7 +753,7 @@ void StartDefaultTask(void *argument)
       }  
   
       // Individual cells: Differences
-      yprintf(&pbuf1,"\n\rD:");
+      yprintf(&pbuf1,"\n\rD: ");
       fprev = 0;
       for (int i = 0; i < 16; i++)
       {
@@ -775,6 +788,8 @@ void StartDefaultTask(void *argument)
 
  #define CHECKRELAYEDWIRES
   #ifndef CHECKRELAYEDWIRES
+      HAL_GPIO_WritePin(GPIOB,GPIO_PIN_2 | GPIO_PIN_10,GPIO_PIN_RESET);
+      notelim = notectr + RELAYDELAY;
       state = 2; // Do the delay, then continue w/o relay wire check
       break;
   #else
@@ -791,22 +806,31 @@ void StartDefaultTask(void *argument)
       yprintf(&pbuf1,"\n\rZ:");
 
       state = 2;
+yprintf(&pbuf1,"\n\rR:");
+ for (int i = 0; i < 16; i++)
+ {
+   yprintf(&pbuf1,"%7.4f ",*(pfsum + i));
+ }
+      yprintf(&pbuf1,"\n\rW :");
 
-      for (int i= 0; i < 3; i++)
-      {
-        if (*(pfsum + remap[i]) > adc1.lc.flim_relayhi) // Relay switched wire: greater than = Open
+      /* Current sense wire. */
+      uint8_t cx = 3;
+        if (*(pfsum + cx) > adc1.lc.flim_relayhi) // Relay switched wire: greater than = Open
         { // Here, wire must be connected to some CELL and not ground
-          yprintf(&pbuf2," %s %s %0.3f",rename[i],"WRONG",*(pfsum + remap[i]));
-          continue;
+          yprintf(&pbuf2," %s %s %0.3f","CUR SENSE","WRONG",*(pfsum + cx));
         }
-        if (*(pfsum + remap[i]) < adc1.lc.flim_relaylo) // Relay switched wire: less than = OK
+        else if (*(pfsum + cx) < adc1.lc.flim_relaylo) // Relay switched wire: less than = OK
         { // Here, wire shows small or no voltage, hence continuity.
-          yprintf(&pbuf2," %s %s %0.3f",rename[i],"GOOD",*(pfsum + remap[i]));
-          continue;
+          yprintf(&pbuf2," %s %s %0.3f","CUR SENSE","GOOD",*(pfsum + cx));
         } // Here, input pin not connected to anything
-        yprintf(&pbuf2," %s %s %0.3f",rename[i],"OPEN",*(pfsum + remap[i]));
-      }
-//      yprintf(&pbuf2,"\n\r   SRN %0.4f SRP %0.4f C0 %0.4f",*(pfsum + 3),*(pfsum + 1),*(pfsum + 7));
+        else
+          yprintf(&pbuf2," %s %s %0.3f","CUR SENSE","OPEN",*(pfsum + cx));
+
+      /* Cell #17: pin/adc value; difference #17-#16. */
+      yprintf(&pbuf2,"\n\r Pin 20: %7.4f  Cell #17: %7.4f",*(pfsum + 5),*(pfsum + 5) - *(pfsum + 15) );
+
+      /* Cell #18: pin/adc value; difference #18-#17. */
+      yprintf(&pbuf2,"\n\r Pin 11: %7.4f  Cell #18: %7.4f",*(pfsum + 3),*(pfsum + 3) - *(pfsum + 5) );
 
       // Turn fets and relays OFF to switch ADC inputs
       HAL_GPIO_WritePin(GPIOB,GPIO_PIN_2 | GPIO_PIN_10,GPIO_PIN_RESET);

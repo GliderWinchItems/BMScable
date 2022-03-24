@@ -1,2 +1,2 @@
 #!/bin/bash
-$ARM_PREFIX/bin/arm-none-eabi-objcopy -O srec BMScableL431.elf BMScableL431.srec
+$ARM_PREFIX/bin/arm-none-eabi-objcopy -O srec bmsbq431R.elf bmsbq431R.srec

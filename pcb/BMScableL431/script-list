@@ -1,2 +1,2 @@
 #!/bin/bash
-make ; cd build; $ARM_PREFIX/bin/arm-none-eabi-objdump -S BMScableL431.elf | tee BMScableL431.list ; cd ..
+make ; cd build; $ARM_PREFIX/bin/arm-none-eabi-objdump -S bmsbq431R.elf | tee bmsbq431R.list ; cd ..
